@@ -16,6 +16,24 @@ class Settings(BaseSettings):
     )
 
     DEBUG: bool = Field(default=False, alias="app.debug")
+    
+    # Database
+    DATABASE_URL: str = Field(
+        default="postgresql+asyncpg://user:password@localhost:5432/assetflow",
+        description="Async PostgreSQL connection string",
+    )
+    
+    # JWT Auth
+    SECRET_KEY: str = Field(default="super-secret-key-for-local-testing-only-change-in-prod")
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 720
+    
+    # SMTP Settings for OTP
+    SMTP_ENABLED: bool = Field(default=False)
+    SMTP_HOST: str = Field(default="smtp.gmail.com")
+    SMTP_PORT: int = Field(default=587)
+    SMTP_USER: Optional[str] = Field(default=None)
+    SMTP_PASSWORD: Optional[str] = Field(default=None)
 
 
 @cache
