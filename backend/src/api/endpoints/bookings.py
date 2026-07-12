@@ -149,6 +149,21 @@ async def create_booking(
         status=BookingStatus.UPCOMING,
     )
     db.add(new_booking)
+    
+    # 4. Notify Booker
+    from src.api.endpoints.notifications import notify
+    from src.core.enums import NotificationType
+    
+    await notify(
+        db=db,
+        user_id=current_user.id,
+        type=NotificationType.BOOKING_CONFIRMED,
+        title="Booking Confirmed",
+        message=f"You have successfully booked {asset.name}.",
+        entity_type="booking",
+        entity_id=new_booking.id
+    )
+    
     await db.commit()
 
     # Reload with joins
@@ -244,6 +259,20 @@ async def cancel_booking(
     booking.status = BookingStatus.CANCELLED
     booking.cancelled_at = datetime.now(timezone.utc)
     booking.cancelled_by = current_user.id
+    
+    # Notify Booker
+    from src.api.endpoints.notifications import notify
+    from src.core.enums import NotificationType
+    
+    await notify(
+        db=db,
+        user_id=booking.user_id,
+        type=NotificationType.BOOKING_CANCELLED,
+        title="Booking Cancelled",
+        message=f"Booking for {booking.asset.name if booking.asset else 'an asset'} was cancelled.",
+        entity_type="booking",
+        entity_id=booking.id
+    )
 
     await db.commit()
     await db.refresh(booking)

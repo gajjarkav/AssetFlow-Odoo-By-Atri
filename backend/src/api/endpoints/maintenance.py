@@ -101,6 +101,25 @@ async def create_maintenance(
         status=MaintenanceStatus.PENDING
     )
     db.add(req)
+    
+    # Notify all Asset Managers / Admins
+    from src.api.endpoints.notifications import notify
+    from src.core.enums import NotificationType
+    
+    am_stmt = select(User.id).where(User.role.in_([UserRole.ASSET_MANAGER, UserRole.ADMIN]))
+    am_ids = (await db.execute(am_stmt)).scalars().all()
+    
+    for am_id in am_ids:
+        await notify(
+            db=db,
+            user_id=am_id,
+            type=NotificationType.MAINTENANCE_RAISED,
+            title="Maintenance Raised",
+            message=f"Maintenance requested for {asset.name} by {current_user.name}.",
+            entity_type="maintenance",
+            entity_id=req.id
+        )
+
     await db.commit()
     
     reload_res = await db.execute(_load_maintenance_query(MaintenanceRequest.id == req.id))
@@ -234,6 +253,40 @@ async def transition_maintenance(
             asset.status = AssetStatus.AVAILABLE
 
     await db.commit()
+    
+    # Notify Raiser
+    from src.api.endpoints.notifications import notify
+    from src.core.enums import NotificationType
+    
+    notif_type = None
+    title = ""
+    message = ""
+    
+    if target == MaintenanceStatus.APPROVED:
+        notif_type = NotificationType.MAINTENANCE_APPROVED
+        title = "Maintenance Approved"
+        message = f"Maintenance for {asset.name} has been approved."
+    elif target == MaintenanceStatus.REJECTED:
+        notif_type = NotificationType.MAINTENANCE_REJECTED
+        title = "Maintenance Rejected"
+        message = f"Maintenance for {asset.name} was rejected. Reason: {req.rejection_reason}"
+    elif target == MaintenanceStatus.RESOLVED:
+        notif_type = NotificationType.MAINTENANCE_RESOLVED
+        title = "Maintenance Resolved"
+        message = f"Maintenance for {asset.name} has been resolved. {req.resolution_notes or ''}"
+        
+    if notif_type:
+        await notify(
+            db=db,
+            user_id=req.raised_by,
+            type=notif_type,
+            title=title,
+            message=message,
+            entity_type="maintenance",
+            entity_id=req.id
+        )
+        await db.commit()
+
     await db.refresh(req)
     await db.refresh(req.asset)
 

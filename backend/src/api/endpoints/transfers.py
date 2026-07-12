@@ -110,6 +110,20 @@ async def request_transfer(
     )
     
     db.add(tr)
+    
+    # 4. Notify Target User
+    from src.api.endpoints.notifications import notify
+    from src.core.enums import NotificationType
+    await notify(
+        db=db,
+        user_id=transfer_in.to_user_id,
+        type=NotificationType.TRANSFER_REQUESTED,
+        title="Transfer Requested",
+        message=f"{asset.name} has been requested for transfer to you.",
+        entity_type="transfer",
+        entity_id=tr.id
+    )
+    
     await db.commit()
     
     # Reload relation details for response mapping
@@ -312,6 +326,32 @@ async def approve_transfer(
     tr.decided_at = datetime.now(timezone.utc)
     tr.decision_notes = decision_in.notes
     
+    # 5. Notify Users
+    from src.api.endpoints.notifications import notify
+    from src.core.enums import NotificationType
+    
+    # Notify old holder
+    await notify(
+        db=db,
+        user_id=tr.from_user_id,
+        type=NotificationType.TRANSFER_APPROVED,
+        title="Transfer Approved",
+        message=f"Transfer of {tr.asset.name} has been approved. It is now with {tr.to_user.name if tr.to_user else 'another employee'}.",
+        entity_type="transfer",
+        entity_id=tr.id
+    )
+    
+    # Notify new holder
+    await notify(
+        db=db,
+        user_id=tr.to_user_id,
+        type=NotificationType.TRANSFER_APPROVED,
+        title="Transfer Approved",
+        message=f"Transfer of {tr.asset.name} to you has been approved.",
+        entity_type="transfer",
+        entity_id=tr.id
+    )
+
     await db.commit()
     
     # Reload relation details for decided_by_name
@@ -374,6 +414,20 @@ async def reject_transfer(
     tr.decided_by = current_user.id
     tr.decided_at = datetime.now(timezone.utc)
     tr.decision_notes = decision_in.notes
+    
+    # 5. Notify Requester
+    from src.api.endpoints.notifications import notify
+    from src.core.enums import NotificationType
+    
+    await notify(
+        db=db,
+        user_id=tr.requested_by,
+        type=NotificationType.TRANSFER_REJECTED,
+        title="Transfer Rejected",
+        message=f"Transfer of {tr.asset.name} was rejected. Reason: {tr.decision_notes}",
+        entity_type="transfer",
+        entity_id=tr.id
+    )
     
     await db.commit()
     

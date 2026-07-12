@@ -138,6 +138,21 @@ async def allocate_asset(
     asset.status = AssetStatus.ALLOCATED
     
     db.add(new_alloc)
+    
+    # 8. Notify assignee if employee
+    if alloc_in.employee_id:
+        from src.api.endpoints.notifications import notify
+        from src.core.enums import NotificationType
+        await notify(
+            db=db,
+            user_id=alloc_in.employee_id,
+            type=NotificationType.ASSET_ASSIGNED,
+            title="Asset assigned",
+            message=f"{asset.tag or 'Asset'} ({asset.name}) was allocated to you.",
+            entity_type="allocation",
+            entity_id=new_alloc.id
+        )
+        
     await db.commit()
     
     # Reload relation details for mapping
