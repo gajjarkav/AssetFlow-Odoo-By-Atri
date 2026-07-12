@@ -27,7 +27,7 @@ class User(Base):
     
     # Relations
     department_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("departments.id"), nullable=True)
-    department = relationship("Department")
+    department = relationship("Department", foreign_keys=[department_id], back_populates="users")
     
     # Optional / Extra
     phone: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)

@@ -1,33 +1,38 @@
-from __future__ import annotations
+import enum
 
-from enum import Enum
+class UserRole(enum.Enum):
+    EMPLOYEE = "EMPLOYEE"
+    DEPARTMENT_HEAD = "DEPARTMENT_HEAD"
+    ASSET_MANAGER = "ASSET_MANAGER"
+    ADMIN = "ADMIN"
 
-class EnvironmentType(str, Enum):
-    DEVELOPMENT = "development"
-    PRODUCTION = "production"
-    TESTING = "testing"
-    STAGING = "staging"
+class UserStatus(enum.Enum):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
 
-class UserRole(str, Enum):
-    EMPLOYEE = "employee"
-    DEPARTMENT_HEAD = "department_head"
-    ASSET_MANAGER = "asset_manager"
-    ADMIN = "admin"
+class AssetStatus(enum.Enum):
+    AVAILABLE = "AVAILABLE"
+    ALLOCATED = "ALLOCATED"
+    RESERVED = "RESERVED"
+    UNDER_MAINTENANCE = "UNDER_MAINTENANCE"
+    LOST = "LOST"
+    RETIRED = "RETIRED"
+    DISPOSED = "DISPOSED"
 
-class UserStatus(str, Enum):
-    ACTIVE = "active"
-    INACTIVE = "inactive"
+class BookingStatus(enum.Enum):
+    UPCOMING = "UPCOMING"
+    ONGOING = "ONGOING"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
 
-class AssetStatus(str, Enum):
-    AVAILABLE = "available"
-    ALLOCATED = "allocated"
-    UNDER_MAINTENANCE = "under_maintenance"
-    RETIRED = "retired"
-    LOST = "lost"
+class MaintenanceStatus(enum.Enum):
+    PENDING = "PENDING"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
+    IN_PROGRESS = "IN_PROGRESS"
+    RESOLVED = "RESOLVED"
 
-class AssetType(str, Enum):
-    HARDWARE = "hardware"
-    SOFTWARE = "software"
-    FURNITURE = "furniture"
-    VEHICLE = "vehicle"
-    OTHER = "other"
+class TransferStatus(enum.Enum):
+    REQUESTED = "REQUESTED"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
