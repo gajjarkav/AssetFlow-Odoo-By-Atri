@@ -2,7 +2,16 @@ import * as React from "react"
 import { cn } from "../../lib/utils"
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("rounded-2xl border border-slate-200/60 bg-white/90 backdrop-blur-xl text-slate-900 shadow-xl shadow-indigo-500/5", className)} {...props} />
+  <div 
+    ref={ref} 
+    className={cn(
+      "rounded-3xl border border-white/40 bg-white/60 backdrop-blur-3xl text-slate-900",
+      "shadow-[0_8px_40px_-12px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,1)]",
+      "transition-all duration-300 hover:shadow-[0_16px_60px_-15px_rgba(79,70,229,0.15)]",
+      className
+    )} 
+    {...props} 
+  />
 ))
 Card.displayName = "Card"
 
