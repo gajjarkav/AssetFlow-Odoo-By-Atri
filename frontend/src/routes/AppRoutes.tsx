@@ -21,7 +21,16 @@ import LoginPage from "../pages/auth/LoginPage";
 import SignupPage from "../pages/auth/SignupPage";
 import TransfersPage from "../pages/TransfersPage";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes (data is considered fresh for 5 mins)
+      gcTime: 10 * 60 * 1000, // 10 minutes (keep inactive data in cache for 10 mins)
+      refetchOnWindowFocus: false, // Don't refetch on tab switch to avoid spamming the backend
+      retry: 1, // Only retry failed requests once
+    },
+  },
+});
 
 export const AppRoutes = () => {
   return (
