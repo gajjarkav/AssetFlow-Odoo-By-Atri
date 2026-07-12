@@ -12,16 +12,16 @@ export const Topbar: React.FC = () => {
   const title = currentNavItem ? currentNavItem.label : "Dashboard";
 
   return (
-    <div className="h-[60px] bg-[var(--bg-sidebar)] border-b border-[var(--border)] px-6 flex items-center justify-between shrink-0">
-      <h1 className="text-xl font-semibold text-[var(--text-primary)]">{title}</h1>
+    <div className="h-[60px] bg-white/70 backdrop-blur-xl border-b border-slate-200/60 px-6 flex items-center justify-between shrink-0 sticky top-0 z-20 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+      <h1 className="text-xl font-bold text-slate-800 tracking-tight">{title}</h1>
       
       <div className="flex items-center gap-4">
-        <button className="relative p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-base)] rounded-full transition-colors border border-[var(--border)]">
-          <Bell size={20} />
-          <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-[var(--danger)] rounded-full border border-[var(--bg-sidebar)]"></span>
+        <button className="relative p-2 text-slate-400 hover:text-indigo-600 bg-white hover:bg-indigo-50 rounded-full transition-all border border-slate-100 shadow-sm">
+          <Bell size={18} />
+          <span className="absolute top-1 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
         </button>
         
-        <div className="w-8 h-8 rounded-full bg-[var(--primary)] flex items-center justify-center text-white font-bold text-sm cursor-pointer shadow-md">
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold text-sm cursor-pointer shadow-md shadow-indigo-500/20 hover:scale-105 transition-transform">
           {user?.name?.charAt(0) || "U"}
         </div>
       </div>

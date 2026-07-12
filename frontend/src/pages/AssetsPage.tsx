@@ -27,13 +27,13 @@ const AssetsPage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-[#F8FAFC]">Asset Directory</h1>
-        <Button className="gap-2"><Plus size={16} /> Register Asset</Button>
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Asset Directory</h1>
+        <Button className="gap-2 shadow-md shadow-indigo-500/20"><Plus size={16} /> Register Asset</Button>
       </div>
 
-      <div className="bg-[#1A1A22] border border-[#2A2A38] rounded-xl p-4 flex flex-col sm:flex-row gap-4">
+      <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4 flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <Input 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -42,7 +42,7 @@ const AssetsPage: React.FC = () => {
           />
         </div>
         <div className="w-full sm:w-48 flex items-center gap-2">
-          <Filter className="text-[#64748B] shrink-0" size={18} />
+          <Filter className="text-slate-400 shrink-0" size={18} />
           <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
             <option value="all">All Statuses</option>
             <option value="available">Available</option>
@@ -52,7 +52,7 @@ const AssetsPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-[#1A1A22] border border-[#2A2A38] rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         {isLoading ? (
           <div className="p-6"><LoadingSkeleton /></div>
         ) : (
@@ -71,9 +71,9 @@ const AssetsPage: React.FC = () => {
               {filteredAssets?.map((asset: any) => (
                 <TableRow key={asset.id}>
                   <TableCell className="font-mono text-sm">{asset.tag}</TableCell>
-                  <TableCell className="font-medium">
+                  <TableCell className="font-bold text-slate-800">
                     {asset.name}
-                    {asset.current_holder_name && <span className="block text-xs text-[#94A3B8]">Hold: {asset.current_holder_name}</span>}
+                    {asset.current_holder_name && <span className="block text-xs text-slate-500 font-normal mt-0.5">Hold: {asset.current_holder_name}</span>}
                   </TableCell>
                   <TableCell>{asset.category}</TableCell>
                   <TableCell>{asset.location}</TableCell>
@@ -85,7 +85,7 @@ const AssetsPage: React.FC = () => {
               ))}
               {filteredAssets?.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-[#64748B]">No assets found.</TableCell>
+                  <TableCell colSpan={6} className="text-center py-8 text-slate-500 font-medium">No assets found.</TableCell>
                 </TableRow>
               )}
             </TableBody>

@@ -18,8 +18,8 @@ const BookingPage: React.FC = () => {
     <div className="space-y-6 max-w-5xl mx-auto">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#F8FAFC]">Resource Booking</h1>
-          <p className="text-sm text-[#94A3B8]">Time-slot booking for shared resources</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Resource Booking</h1>
+          <p className="text-sm text-slate-500">Time-slot booking for shared resources</p>
         </div>
         <Button className="gap-2"><CalendarIcon size={16} /> Book a Slot</Button>
       </div>
@@ -42,7 +42,7 @@ const BookingPage: React.FC = () => {
           {isLoading ? <LoadingSkeleton /> : (
             <div className="relative mt-8">
               {/* Timeline background */}
-              <div className="absolute left-16 top-0 bottom-0 w-px bg-[#2A2A38]"></div>
+              <div className="absolute left-16 top-0 bottom-0 w-px bg-slate-200"></div>
               
               <div className="space-y-6">
                 {[9, 10, 11, 12, 13, 14, 15, 16, 17].map(hour => {
@@ -54,13 +54,13 @@ const BookingPage: React.FC = () => {
                   
                   return (
                     <div key={hour} className="relative flex items-start gap-8">
-                      <div className="w-12 text-right text-sm text-[#94A3B8] pt-2 shrink-0">{hourStr}</div>
-                      <div className="relative w-full min-h-[60px] border-t border-[#2A2A38]/50 pt-2">
+                      <div className="w-12 text-right text-sm text-slate-500 font-medium pt-2 shrink-0">{hourStr}</div>
+                      <div className="relative w-full min-h-[60px] border-t border-slate-200/50 pt-2">
                         {bookingForHour && (
-                          <div className="absolute top-2 left-0 w-full bg-blue-500/20 border border-blue-500/50 rounded-md p-3">
+                          <div className="absolute top-2 left-0 w-full bg-blue-50 border border-blue-200 rounded-lg p-3 shadow-sm">
                             <div className="flex justify-between items-center">
-                              <span className="font-semibold text-blue-400">Booked - {bookingForHour.user_name}</span>
-                              <span className="text-xs text-blue-400/80">
+                              <span className="font-bold text-blue-700">Booked - {bookingForHour.user_name}</span>
+                              <span className="text-xs text-blue-600 font-medium">
                                 {dayjs(bookingForHour.start_time).format("h:mm A")} - {dayjs(bookingForHour.end_time).format("h:mm A")}
                               </span>
                             </div>
@@ -68,10 +68,10 @@ const BookingPage: React.FC = () => {
                         )}
                         {/* Simulation of a rejected overlap */}
                         {is12 && (
-                          <div className="absolute top-2 left-0 w-full bg-red-500/10 border border-red-500/30 border-dashed rounded-md p-3 opacity-70">
+                          <div className="absolute top-2 left-0 w-full bg-red-50 border border-red-200 border-dashed rounded-lg p-3 opacity-90">
                             <div className="flex items-center gap-2">
                               <AlertCircle size={14} className="text-red-500" />
-                              <span className="text-xs text-red-400">Rejected: 12:00 - overlap with existing</span>
+                              <span className="text-xs font-medium text-red-600">Rejected: 12:00 - overlap with existing</span>
                             </div>
                           </div>
                         )}

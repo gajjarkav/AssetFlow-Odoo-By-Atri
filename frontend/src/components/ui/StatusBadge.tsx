@@ -6,7 +6,7 @@ interface StatusBadgeProps {
 }
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
-  const config = statusConfig[status.toLowerCase()] || "bg-gray-500/20 text-gray-400 border border-gray-500/30";
+  const config = statusConfig[status.toLowerCase()] || "bg-slate-100 text-slate-700 border border-slate-200";
   const label = status.replace(/_/g, " ").toUpperCase();
   
   return (

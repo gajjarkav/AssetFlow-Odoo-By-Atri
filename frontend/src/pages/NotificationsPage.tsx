@@ -25,7 +25,7 @@ const NotificationsPage: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#F8FAFC]">Activity logs & Notifications</h1>
+      <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Activity logs & Notifications</h1>
 
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="mb-6">
@@ -39,20 +39,20 @@ const NotificationsPage: React.FC = () => {
           <Card>
             <CardContent className="p-0">
               {isLoading ? <div className="p-6"><LoadingSkeleton /></div> : (
-                <div className="divide-y divide-[#2A2A38]">
+                <div className="divide-y divide-slate-100">
                   {notifications?.map((notif: any) => (
-                    <div key={notif.id} className={`p-4 flex items-center justify-between hover:bg-[#111118] transition-colors ${!notif.read ? 'bg-[#111118]/50' : ''}`}>
+                    <div key={notif.id} className={`p-4 flex items-center justify-between hover:bg-slate-50 transition-colors ${!notif.read ? 'bg-slate-50' : 'bg-white'}`}>
                       <div className="flex items-center gap-4">
-                        <div className="bg-[#0B0B0F] p-2 rounded-full border border-[#2A2A38]">
+                        <div className="bg-white p-2 rounded-full border border-slate-200 shadow-sm">
                           {getIcon(notif.type)}
                         </div>
                         <div>
-                          <p className={`text-sm ${!notif.read ? 'font-bold text-[#F8FAFC]' : 'text-[#94A3B8]'}`}>
+                          <p className={`text-sm ${!notif.read ? 'font-bold text-slate-900' : 'text-slate-600'}`}>
                             {notif.message}
                           </p>
                         </div>
                       </div>
-                      <span className="text-xs text-[#64748B] shrink-0">{notif.time}</span>
+                      <span className="text-xs text-slate-400 shrink-0 font-medium">{notif.time}</span>
                     </div>
                   ))}
                 </div>
@@ -60,9 +60,9 @@ const NotificationsPage: React.FC = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="alerts"><Card><CardContent className="p-8 text-center text-[#94A3B8]">Alerts filtered view</CardContent></Card></TabsContent>
-        <TabsContent value="approvals"><Card><CardContent className="p-8 text-center text-[#94A3B8]">Approvals filtered view</CardContent></Card></TabsContent>
-        <TabsContent value="bookings"><Card><CardContent className="p-8 text-center text-[#94A3B8]">Bookings filtered view</CardContent></Card></TabsContent>
+        <TabsContent value="alerts"><Card><CardContent className="p-8 text-center text-slate-500 font-medium">Alerts filtered view</CardContent></Card></TabsContent>
+        <TabsContent value="approvals"><Card><CardContent className="p-8 text-center text-slate-500 font-medium">Approvals filtered view</CardContent></Card></TabsContent>
+        <TabsContent value="bookings"><Card><CardContent className="p-8 text-center text-slate-500 font-medium">Bookings filtered view</CardContent></Card></TabsContent>
       </Tabs>
     </div>
   );

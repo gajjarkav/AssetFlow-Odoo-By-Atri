@@ -29,23 +29,23 @@ const AuditPage: React.FC = () => {
     <div className="space-y-6 max-w-6xl mx-auto">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#F8FAFC]">Asset Audit</h1>
-          <p className="text-sm text-[#94A3B8]">Audit cycles and discrepancy reports</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Asset Audit</h1>
+          <p className="text-sm text-slate-500">Audit cycles and discrepancy reports</p>
         </div>
         <Button className="gap-2">New Audit Cycle</Button>
       </div>
 
       {loadingAudits ? <LoadingSkeleton /> : activeAudit ? (
-        <Card className="border-[#22C55E]/30 bg-[#22C55E]/5 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
+        <Card className="border-emerald-300 bg-emerald-50/30 shadow-emerald-500/10 shadow-lg">
           <CardHeader className="flex flex-row items-start justify-between pb-2">
             <div>
-              <CardTitle className="text-lg text-[#F8FAFC]">{activeAudit.name}</CardTitle>
+              <CardTitle className="text-lg font-bold text-slate-900">{activeAudit.name}</CardTitle>
               <CardDescription>Auditors: {activeAudit.auditor} | {activeAudit.date}</CardDescription>
             </div>
             <Badge variant="success" className="animate-pulse">Active Cycle</Badge>
           </CardHeader>
           <CardContent>
-            <div className="bg-[#1A1A22] rounded-lg border border-[#2A2A38] mt-4 overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200 mt-4 overflow-hidden shadow-sm">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -59,7 +59,7 @@ const AuditPage: React.FC = () => {
                   {mockItems.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell className="font-medium">
-                        <span className="font-mono text-xs text-[#94A3B8] block">{item.asset_tag}</span>
+                        <span className="font-mono text-xs font-medium text-slate-500 block">{item.asset_tag}</span>
                         {item.asset_name}
                       </TableCell>
                       <TableCell>{item.location}</TableCell>
@@ -82,7 +82,7 @@ const AuditPage: React.FC = () => {
                             <Button size="sm" variant="outline" className="border-amber-500/30 hover:bg-amber-500/20 text-amber-500 h-8 px-2"><AlertTriangle size={14}/></Button>
                           </>
                         ) : (
-                          <span className="text-xs text-[#64748B] italic">Logged</span>
+                          <span className="text-xs font-medium text-slate-400 italic">Logged</span>
                         )}
                       </TableCell>
                     </TableRow>
@@ -91,17 +91,17 @@ const AuditPage: React.FC = () => {
               </Table>
             </div>
 
-            <div className="mt-6 flex items-center justify-between p-4 bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-lg">
+            <div className="mt-6 flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-lg shadow-sm">
               <div className="flex items-center gap-3">
-                <AlertTriangle className="text-[#EF4444]" size={20} />
-                <span className="text-[#EF4444] font-medium text-sm">2 assets flagged - discrepancy report generated automatically.</span>
+                <AlertTriangle className="text-red-500" size={20} />
+                <span className="text-red-700 font-bold text-sm">2 assets flagged - discrepancy report generated automatically.</span>
               </div>
               <Button variant="destructive" size="sm">Close Audit Cycle</Button>
             </div>
           </CardContent>
         </Card>
       ) : (
-        <Card><CardContent className="p-8 text-center text-[#94A3B8]">No active audit cycles.</CardContent></Card>
+        <Card><CardContent className="p-8 text-center text-slate-500 font-medium">No active audit cycles.</CardContent></Card>
       )}
     </div>
   );

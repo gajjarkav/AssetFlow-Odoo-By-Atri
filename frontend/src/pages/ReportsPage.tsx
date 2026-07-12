@@ -14,7 +14,7 @@ const ReportsPage: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10">
-      <h1 className="text-2xl font-bold text-[#F8FAFC]">Reports & Analytics</h1>
+      <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Reports & Analytics</h1>
 
       {isLoading ? <div className="space-y-6"><LoadingSkeleton /><LoadingSkeleton /></div> : reports ? (
         <>
@@ -29,7 +29,7 @@ const ReportsPage: React.FC = () => {
                   <BarChart data={reports.utilization}>
                     <XAxis dataKey="name" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
                     <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
-                    <Tooltip cursor={{fill: '#2A2A38'}} contentStyle={{backgroundColor: '#1A1A22', borderColor: '#2A2A38', color: '#F8FAFC'}} />
+                    <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'}} />
                     <Bar dataKey="value" fill="#6366F1" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -45,7 +45,7 @@ const ReportsPage: React.FC = () => {
                   <LineChart data={reports.maintenanceFreq}>
                     <XAxis dataKey="month" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
                     <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
-                    <Tooltip contentStyle={{backgroundColor: '#1A1A22', borderColor: '#2A2A38', color: '#F8FAFC'}} />
+                    <Tooltip contentStyle={{backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'}} />
                     <Line type="monotone" dataKey="value" stroke="#22C55E" strokeWidth={2} dot={{r: 4, fill: '#22C55E'}} activeDot={{r: 6}} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -61,9 +61,9 @@ const ReportsPage: React.FC = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {reports.mostUsed.map((item: any, i: number) => (
-                  <div key={i} className="flex justify-between items-start border-b border-[#2A2A38] pb-3 last:border-0 last:pb-0">
-                    <span className="text-sm font-medium text-[#F8FAFC]">{item.name}</span>
-                    <span className="text-xs text-[#94A3B8]">{item.usage}</span>
+                  <div key={i} className="flex justify-between items-start border-b border-slate-100 pb-3 last:border-0 last:pb-0">
+                    <span className="text-sm font-bold text-slate-800">{item.name}</span>
+                    <span className="text-xs text-slate-500 font-medium">{item.usage}</span>
                   </div>
                 ))}
               </CardContent>
@@ -75,9 +75,9 @@ const ReportsPage: React.FC = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {reports.idle.map((item: any, i: number) => (
-                  <div key={i} className="flex justify-between items-start border-b border-[#2A2A38] pb-3 last:border-0 last:pb-0">
-                    <span className="text-sm font-medium text-[#F8FAFC]">{item.name}</span>
-                    <span className="text-xs text-[#EF4444]">{item.usage}</span>
+                  <div key={i} className="flex justify-between items-start border-b border-slate-100 pb-3 last:border-0 last:pb-0">
+                    <span className="text-sm font-bold text-slate-800">{item.name}</span>
+                    <span className="text-xs font-bold text-red-500">{item.usage}</span>
                   </div>
                 ))}
               </CardContent>
@@ -89,9 +89,9 @@ const ReportsPage: React.FC = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {reports.dueForMaintenance.map((item: any, i: number) => (
-                  <div key={i} className="border-b border-[#2A2A38] pb-3 last:border-0 last:pb-0">
-                    <p className="text-sm font-medium text-[#F8FAFC]">[{item.tag}] {item.name}</p>
-                    <p className="text-xs text-[#F59E0B] mt-1">{item.reason}</p>
+                  <div key={i} className="border-b border-slate-100 pb-3 last:border-0 last:pb-0">
+                    <p className="text-sm font-bold text-slate-800">[{item.tag}] {item.name}</p>
+                    <p className="text-xs font-bold text-amber-500 mt-1">{item.reason}</p>
                   </div>
                 ))}
                 <Button variant="outline" className="w-full mt-4 text-xs h-8">Export Report</Button>
