@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.session import AsyncSessionLocal
@@ -139,30 +139,47 @@ async def seed_demo_data():
             created_by=am.id
         )
         
-        db.add_all([laptop, projector, room, chair])
+        assets = [laptop, projector, room, chair]
+        db.add_all(assets)
         await db.commit()
         await db.refresh(laptop)
         
         # 5. Create Demo Allocation (Laptop to Arjun)
         print("Creating Demo Allocation...")
+        
+        # 1. Normal active allocation for Laptop
         alloc = Allocation(
             asset_id=laptop.id,
             employee_id=emp.id,
+            department_id=emp.department_id,
             allocated_by=am.id,
+            expected_return=datetime.now(timezone.utc) + timedelta(days=30),
             status=AllocationStatus.ACTIVE,
-            notes="Onboarding kit"
         )
         db.add(alloc)
+        laptop.status = AssetStatus.ALLOCATED
+        
+        # 2. Overdue allocation for Chair to trigger dashboard banner
+        overdue_alloc = Allocation(
+            asset_id=chair.id,
+            employee_id=emp.id,
+            department_id=emp.department_id,
+            allocated_by=am.id,
+            expected_return=datetime.now(timezone.utc) - timedelta(days=3),
+            status=AllocationStatus.ACTIVE,
+        )
+        chair.status = AssetStatus.ALLOCATED
+        db.add(overdue_alloc)
         await db.commit()
         
-        # 6. Create Demo Booking — Room B2 booked by Arjun (09:00–10:00 today)
+        # 6. Create Demo Booking — Room B2 booked by Arjun (starts in 1 hour)
         print("Creating Demo Booking...")
-        today = datetime.now(timezone.utc).replace(hour=3, minute=30, second=0, microsecond=0)  # 09:00 IST = 03:30 UTC
+        now_dt = datetime.now(timezone.utc)
         booking = Booking(
             asset_id=room.id,
             user_id=emp.id,
-            start_at=today,
-            end_at=today.replace(hour=4, minute=30),   # 10:00 IST = 04:30 UTC
+            start_at=now_dt + timedelta(hours=1),
+            end_at=now_dt + timedelta(hours=2),
             purpose="Procurement standup",
             status=BookingStatus.UPCOMING,
         )
