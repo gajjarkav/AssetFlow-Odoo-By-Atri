@@ -1,7 +1,9 @@
 {
-  "name": "frontend",
+  "name": "assetflow-odoo-hackathon",
+  "description": "Ultra-modern frontend for Odoo Enterprise Asset Management - Hackathon 2026",
+  "author": "Atri",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
