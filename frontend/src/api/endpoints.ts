@@ -1,85 +1,83 @@
-import { mockData } from './mockData';
-
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+import client from './client';
 
 export const auth = {
-  login: async (_email: string, _password: string) => { await delay(500); return { data: { user: mockData.users[0], token: 'mock-jwt-token' } }; },
-  signup: async (_data: any) => { await delay(500); return { data: { user: mockData.users[0], token: 'mock-jwt-token' } }; },
-  getMe: async () => { await delay(500); return { data: mockData.users[0] }; },
+  login: async (email: string, password: string) => await client.post('/auth/login', { email, password }),
+  signup: async (data: any) => await client.post('/auth/signup', data),
+  getMe: async () => await client.get('/auth/me'),
 };
 
 export const departments = {
-  getDepartments: async () => { await delay(500); return { data: mockData.departments }; },
-  createDepartment: async (data: any) => { await delay(500); return { data: { ...data, id: 'd-new' } }; },
-  updateDepartment: async (id: number | string, data: any) => { await delay(500); return { data: { ...data, id } }; },
+  getDepartments: async () => await client.get('/departments'),
+  createDepartment: async (data: any) => await client.post('/departments', data),
+  updateDepartment: async (id: number | string, data: any) => await client.put(`/departments/${id}`, data),
 };
 
 export const categories = {
-  getCategories: async () => { await delay(500); return { data: mockData.categories }; },
-  createCategory: async (data: any) => { await delay(500); return { data: { ...data, id: 'c-new' } }; },
+  getCategories: async () => await client.get('/categories'),
+  createCategory: async (data: any) => await client.post('/categories', data),
 };
 
 export const employees = {
-  getEmployees: async (_params?: any) => { await delay(500); return { data: mockData.users }; },
-  updateEmployeeRole: async (id: number | string, role: string) => { await delay(500); return { data: { id, role } }; },
-  updateEmployee: async (id: number | string, data: any) => { await delay(500); return { data: { id, ...data } }; },
+  getEmployees: async (params?: any) => await client.get('/employees', { params }),
+  updateEmployeeRole: async (id: number | string, role: string) => await client.patch(`/employees/${id}/role`, { role }),
+  updateEmployee: async (id: number | string, data: any) => await client.put(`/employees/${id}`, data),
 };
 
 export const assets = {
-  getAssets: async (_params?: any) => { await delay(500); return { data: mockData.assets }; },
-  createAsset: async (data: any) => { await delay(500); return { data: { ...data, id: 'a-new' } }; },
-  getAsset: async (id: number | string) => { await delay(500); return { data: mockData.assets.find(a => a.id === id) || mockData.assets[0] }; },
-  getAssetHistory: async (_id: number | string) => { await delay(500); return { data: [] }; },
+  getAssets: async (params?: any) => await client.get('/assets', { params }),
+  createAsset: async (data: any) => await client.post('/assets', data),
+  getAsset: async (id: number | string) => await client.get(`/assets/${id}`),
+  getAssetHistory: async (id: number | string) => await client.get(`/assets/${id}/history`),
 };
 
 export const allocations = {
-  getAllocations: async (_params?: any) => { await delay(500); return { data: mockData.allocations }; },
-  createAllocation: async (data: any) => { await delay(500); return { data: { ...data, id: 'al-new' } }; },
-  returnAllocation: async (id: number | string, notes?: string) => { await delay(500); return { data: { id, notes, status: 'returned' } }; },
+  getAllocations: async (params?: any) => await client.get('/allocations', { params }),
+  createAllocation: async (data: any) => await client.post('/allocations', data),
+  returnAllocation: async (id: number | string, notes?: string) => await client.patch(`/allocations/${id}/return`, { notes }),
 };
 
 export const transfers = {
-  getTransfers: async (_params?: any) => { await delay(500); return { data: mockData.transfers }; },
-  createTransfer: async (data: any) => { await delay(500); return { data: { ...data, id: 't-new' } }; },
-  approveTransfer: async (id: number | string) => { await delay(500); return { data: { id, status: 'approved' } }; },
-  rejectTransfer: async (id: number | string, reason: string) => { await delay(500); return { data: { id, reason, status: 'rejected' } }; },
+  getTransfers: async (params?: any) => await client.get('/transfers', { params }),
+  createTransfer: async (data: any) => await client.post('/transfers', data),
+  approveTransfer: async (id: number | string) => await client.patch(`/transfers/${id}/approve`),
+  rejectTransfer: async (id: number | string, reason: string) => await client.patch(`/transfers/${id}/reject`, { reason }),
 };
 
 export const resources = {
-  getResources: async () => { await delay(500); return { data: [] }; },
-  getBookings: async (_params?: any) => { await delay(500); return { data: mockData.bookings }; },
-  createBooking: async (data: any) => { await delay(500); return { data: { ...data, id: 'b-new' } }; },
-  cancelBooking: async (id: number | string) => { await delay(500); return { data: { id, status: 'cancelled' } }; },
+  getResources: async () => await client.get('/resources'),
+  getBookings: async (params?: any) => await client.get('/bookings', { params }),
+  createBooking: async (data: any) => await client.post('/bookings', data),
+  cancelBooking: async (id: number | string) => await client.delete(`/bookings/${id}`),
 };
 
 export const maintenance = {
-  getMaintenance: async (_params?: any) => { await delay(500); return { data: mockData.maintenance }; },
-  createMaintenance: async (data: any) => { await delay(500); return { data: { ...data, id: 'm-new' } }; },
-  transitionMaintenance: async (id: number | string, to: string) => { await delay(500); return { data: { id, status: to } }; },
+  getMaintenance: async (params?: any) => await client.get('/maintenance', { params }),
+  createMaintenance: async (data: any) => await client.post('/maintenance', data),
+  transitionMaintenance: async (id: number | string, to: string) => await client.patch(`/maintenance/${id}/transition`, { status: to }),
 };
 
 export const audits = {
-  getAudits: async () => { await delay(500); return { data: mockData.audits }; },
-  createAudit: async (data: any) => { await delay(500); return { data: { ...data, id: 'au-new' } }; },
-  getAudit: async (id: number | string) => { await delay(500); return { data: mockData.audits.find(a => a.id === id) || mockData.audits[0] }; },
-  markAuditItem: async (id: number | string, data: any) => { await delay(500); return { data: { id, ...data } }; },
-  closeAudit: async (id: number | string) => { await delay(500); return { data: { id, status: 'closed' } }; },
+  getAudits: async () => await client.get('/audits'),
+  createAudit: async (data: any) => await client.post('/audits', data),
+  getAudit: async (id: number | string) => await client.get(`/audits/${id}`),
+  markAuditItem: async (id: number | string, data: any) => await client.post(`/audits/${id}/items`, data),
+  closeAudit: async (id: number | string) => await client.post(`/audits/${id}/close`),
 };
 
 export const dashboard = {
-  getDashboardKPIs: async () => { await delay(500); return { data: mockData.dashboard }; },
+  getDashboardKPIs: async () => await client.get('/dashboard'),
 };
 
 export const reports = {
-  getReportsSummary: async () => { await delay(500); return { data: mockData.reports }; },
+  getReportsSummary: async () => await client.get('/reports/summary'),
 };
 
 export const notifications = {
-  getNotifications: async (_params?: any) => { await delay(500); return { data: mockData.notifications }; },
-  markNotificationRead: async (id: number | string) => { await delay(500); return { data: { id, read: true } }; },
-  markAllRead: async () => { await delay(500); return { data: { success: true } }; },
+  getNotifications: async (params?: any) => await client.get('/notifications', { params }),
+  markNotificationRead: async (id: number | string) => await client.patch(`/notifications/${id}/read`),
+  markAllRead: async () => await client.post('/notifications/mark-all-read'),
 };
 
 export const activityLogs = {
-  getActivityLogs: async () => { await delay(500); return { data: mockData.dashboard.recent_activity }; },
+  getActivityLogs: async () => await client.get('/dashboard/activity'),
 };

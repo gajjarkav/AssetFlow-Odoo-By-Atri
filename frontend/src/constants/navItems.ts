@@ -7,7 +7,8 @@ import {
   Wrench,
   ShieldCheck,
   FileBarChart,
-  Bell
+  Bell,
+  ArrowRightLeft
 } from "lucide-react";
 import { UserRole } from "../types";
 
@@ -24,6 +25,7 @@ export const navItems: NavItem[] = [
   { label: "Assets", path: "/assets", icon: Box, allowedRoles: "all" },
   { label: "Allocations", path: "/allocations", icon: ClipboardList, allowedRoles: "all" },
   { label: "Bookings", path: "/bookings", icon: CalendarDays, allowedRoles: "all" },
+  { label: "Transfers", path: "/transfers", icon: ArrowRightLeft, allowedRoles: "all" },
   { label: "Maintenance", path: "/maintenance", icon: Wrench, allowedRoles: "all" },
   { label: "Audits", path: "/audits", icon: ShieldCheck, allowedRoles: ["ADMIN", "ASSET_MANAGER"] },
   { label: "Reports", path: "/reports", icon: FileBarChart, allowedRoles: ["ADMIN", "ASSET_MANAGER", "DEPARTMENT_HEAD"] },

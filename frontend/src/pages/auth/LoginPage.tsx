@@ -40,7 +40,7 @@ const LoginPage: React.FC = () => {
     setErrorMsg("");
     try {
       const res = await auth.login(data.email, data.password);
-      login(res.data.token, res.data.user as any);
+      login(res.data.access_token, res.data.user);
       navigate("/dashboard");
     } catch (err: any) {
       setErrorMsg(err.response?.data?.detail ?? err.message ?? "An error occurred");

@@ -42,11 +42,12 @@ const ReportsPage: React.FC = () => {
               </CardHeader>
               <CardContent className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={reports.utilization}>
-                    <XAxis dataKey="name" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
+                  <BarChart data={reports.utilization_by_department}>
+                    <XAxis dataKey="department_name" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
                     <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
                     <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'}} />
-                    <Bar dataKey="value" fill="#6366F1" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="total_assets" fill="#6366F1" radius={[4, 4, 0, 0]} name="Total Assets" />
+                    <Bar dataKey="allocated" fill="#22C55E" radius={[4, 4, 0, 0]} name="Allocated" />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -56,16 +57,16 @@ const ReportsPage: React.FC = () => {
             <motion.div variants={item}>
               <Card>
               <CardHeader>
-                <CardTitle>Maintenance Frequency</CardTitle>
+                <CardTitle>Maintenance by Category</CardTitle>
               </CardHeader>
               <CardContent className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={reports.maintenanceFreq}>
-                    <XAxis dataKey="month" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
+                  <BarChart data={reports.maintenance_by_category}>
+                    <XAxis dataKey="category_name" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
                     <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
                     <Tooltip contentStyle={{backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'}} />
-                    <Line type="monotone" dataKey="value" stroke="#22C55E" strokeWidth={2} dot={{r: 4, fill: '#22C55E'}} activeDot={{r: 6}} />
-                  </LineChart>
+                    <Bar dataKey="request_count" fill="#EF4444" radius={[4, 4, 0, 0]} name="Maintenance Requests" />
+                  </BarChart>
                 </ResponsiveContainer>
               </CardContent>
               </Card>
@@ -73,19 +74,24 @@ const ReportsPage: React.FC = () => {
           </motion.div>
 
           {/* List Details Row */}
-          <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
             <motion.div variants={item}>
               <Card>
                 <CardHeader>
-                  <CardTitle>Most-used assets</CardTitle>
+                  <CardTitle>Most-used Assets</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {reports.mostUsed.map((item: any, i: number) => (
+                  {reports.most_used_assets?.map((item: any, i: number) => (
                     <div key={i} className="flex justify-between items-start border-b border-slate-100 pb-3 last:border-0 last:pb-0">
-                      <span className="text-sm font-bold text-slate-800">{item.name}</span>
-                      <span className="text-xs text-slate-500 font-medium">{item.usage}</span>
+                      <span className="text-sm font-bold text-slate-800">
+                        {item.name} <span className="text-xs text-slate-500 font-medium">({item.asset_tag})</span>
+                      </span>
+                      <span className="text-xs text-slate-500 font-medium">{item.allocation_count} allocations</span>
                     </div>
                   ))}
+                  {(!reports.most_used_assets || reports.most_used_assets.length === 0) && (
+                    <div className="text-sm text-slate-500">No data available</div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -93,32 +99,20 @@ const ReportsPage: React.FC = () => {
             <motion.div variants={item}>
               <Card>
                 <CardHeader>
-                  <CardTitle>Idle assets</CardTitle>
+                  <CardTitle>Idle Assets (&gt;30 days)</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {reports.idle.map((item: any, i: number) => (
+                  {reports.idle_assets?.map((item: any, i: number) => (
                     <div key={i} className="flex justify-between items-start border-b border-slate-100 pb-3 last:border-0 last:pb-0">
-                      <span className="text-sm font-bold text-slate-800">{item.name}</span>
-                      <span className="text-xs font-bold text-red-500">{item.usage}</span>
+                      <span className="text-sm font-bold text-slate-800">
+                        {item.name} <span className="text-xs text-slate-500 font-medium">({item.asset_tag})</span>
+                      </span>
+                      <span className="text-xs font-bold text-red-500">{item.days_idle} days idle</span>
                     </div>
                   ))}
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div variants={item}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Assets due for maintenance / nearing retirement</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {reports.dueForMaintenance.map((item: any, i: number) => (
-                    <div key={i} className="border-b border-slate-100 pb-3 last:border-0 last:pb-0">
-                      <p className="text-sm font-bold text-slate-800">[{item.tag}] {item.name}</p>
-                      <p className="text-xs font-bold text-amber-500 mt-1">{item.reason}</p>
-                    </div>
-                  ))}
-                  <Button variant="outline" className="w-full mt-4 text-xs h-8">Export Report</Button>
+                  {(!reports.idle_assets || reports.idle_assets.length === 0) && (
+                    <div className="text-sm text-slate-500">No idle assets found</div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>

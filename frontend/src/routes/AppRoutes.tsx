@@ -19,6 +19,7 @@ import ReportsPage from "../pages/ReportsPage";
 import NotificationsPage from "../pages/NotificationsPage";
 import LoginPage from "../pages/auth/LoginPage";
 import SignupPage from "../pages/auth/SignupPage";
+import TransfersPage from "../pages/TransfersPage";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ export const AppRoutes = () => {
                 <Route path="/audits" element={<AuditPage />} />
                 <Route path="/reports" element={<ReportsPage />} />
                 <Route path="/notifications" element={<NotificationsPage />} />
+                <Route path="/transfers" element={<TransfersPage />} />
                 
                 <Route path="/org" element={
                   <AdminRoute>
