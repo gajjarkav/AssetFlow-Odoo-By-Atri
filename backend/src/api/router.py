@@ -1,7 +1,8 @@
 from fastapi import APIRouter
-from src.api.endpoints import auth, employees, dashboard, departments, categories, assets, allocations, transfers, bookings, resources, maintenance, notifications, audits, reports
+from src.api.endpoints import auth, employees, dashboard, departments, categories, assets, allocations, transfers, bookings, resources, maintenance, notifications, audits, reports, health
 
 api_router = APIRouter()
+api_router.include_router(health.router, tags=["System"])  # prefix-less, mounts at /health directly
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
 api_router.include_router(employees.router, prefix="/employees", tags=["employees"])
 api_router.include_router(departments.router, prefix="/departments", tags=["departments"])
