@@ -6,12 +6,15 @@ import {
   CheckCircle, Package, Calendar, ArrowRightLeft, 
   Clock, AlertTriangle, Plus, Wrench, RefreshCw 
 } from "lucide-react";
-import api from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { KPICard } from "../components/ui/KPICard";
 import { LoadingSkeleton } from "../components/ui/LoadingSkeleton";
 import { EmptyState } from "../components/ui/EmptyState";
+import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import { Button } from "../components/ui/button";
 import { DashboardStats } from "../types";
+
+import { dashboard } from "../api/endpoints";
 
 interface RecentActivity {
   id: string;
@@ -26,7 +29,7 @@ interface DashboardResponse {
 }
 
 const fetchDashboard = async (): Promise<DashboardResponse> => {
-  const { data } = await api.get("/dashboard");
+  const { data } = await dashboard.getDashboardKPIs();
   return data;
 };
 
@@ -46,12 +49,9 @@ const DashboardPage: React.FC = () => {
         <AlertTriangle className="text-[#EF4444] mx-auto mb-4" size={48} />
         <h3 className="text-lg font-bold text-[#F8FAFC] mb-2">Failed to load dashboard</h3>
         <p className="text-[#EF4444] mb-6">{error instanceof Error ? error.message : "Unknown error occurred"}</p>
-        <button 
-          onClick={() => refetch()} 
-          className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-6 py-2 rounded-lg font-medium flex items-center gap-2 mx-auto transition-colors"
-        >
+        <Button variant="destructive" onClick={() => refetch()} className="mx-auto flex items-center gap-2">
           <RefreshCw size={18} /> Retry
-        </button>
+        </Button>
       </div>
     );
   }
@@ -114,36 +114,38 @@ const DashboardPage: React.FC = () => {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-[#1A1A22] border border-[#2A2A38] rounded-xl p-6">
-        <h2 className="text-xl font-bold text-[#F8FAFC] mb-6">Recent Activity</h2>
-        
-        {isLoading ? (
-          <div className="space-y-4"><LoadingSkeleton /><LoadingSkeleton /></div>
-        ) : recentActivity.length === 0 ? (
-          <EmptyState icon={Clock} message="No recent activity" description="Activity will appear here once users interact with assets." />
-        ) : (
-          <div className="space-y-4">
-            {recentActivity.map((activity) => {
-              // Determine dot color based on type
-              let dotColor = "bg-gray-500";
-              if (activity.type.includes("allocation")) dotColor = "bg-blue-500";
-              if (activity.type.includes("transfer")) dotColor = "bg-amber-500";
-              if (activity.type.includes("maintenance")) dotColor = "bg-violet-500";
-              if (activity.type.includes("return")) dotColor = "bg-emerald-500";
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Activity</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="space-y-4"><LoadingSkeleton /><LoadingSkeleton /></div>
+          ) : recentActivity.length === 0 ? (
+            <EmptyState icon={Clock} message="No recent activity" description="Activity will appear here once users interact with assets." />
+          ) : (
+            <div className="space-y-4">
+              {recentActivity.map((activity) => {
+                let dotColor = "bg-gray-500";
+                if (activity.type.includes("allocation")) dotColor = "bg-blue-500";
+                if (activity.type.includes("transfer")) dotColor = "bg-amber-500";
+                if (activity.type.includes("maintenance")) dotColor = "bg-violet-500";
+                if (activity.type.includes("return")) dotColor = "bg-emerald-500";
 
-              return (
-                <div key={activity.id} className="flex items-center gap-4 p-3 hover:bg-[#0B0B0F]/50 rounded-lg transition-colors border border-transparent hover:border-[#2A2A38]">
-                  <div className={`w-2.5 h-2.5 rounded-full ${dotColor} shrink-0`} />
-                  <p className="flex-1 text-sm text-[#F8FAFC]">{activity.description}</p>
-                  <span className="text-xs text-[#64748B] shrink-0">
-                    {dayjs(activity.created_at).format("MMM D, h:mm A")}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
+                return (
+                  <div key={activity.id} className="flex items-center gap-4 p-3 hover:bg-[#0B0B0F]/50 rounded-lg transition-colors border border-transparent hover:border-[#2A2A38]">
+                    <div className={`w-2.5 h-2.5 rounded-full ${dotColor} shrink-0`} />
+                    <p className="flex-1 text-sm text-[#F8FAFC]">{activity.description}</p>
+                    <span className="text-xs text-[#64748B] shrink-0">
+                      {dayjs(activity.created_at).format("MMM D, h:mm A")}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };

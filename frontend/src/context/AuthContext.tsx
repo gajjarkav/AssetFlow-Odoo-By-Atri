@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import client from "../api/client";
+import { auth } from "../api/endpoints";
 import { User } from "../types";
 
 interface AuthContextType {
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const fetchUser = async () => {
       if (token) {
         try {
-          const { data } = await client.get("/auth/me");
+          const { data } = await auth.getMe();
           setUser(data);
         } catch (error) {
           logout();

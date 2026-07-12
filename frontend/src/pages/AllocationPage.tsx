@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
-import { AlertTriangle, Search, Check, X, ArrowRight, CornerDownRight, Loader2 } from "lucide-react";
+import { AlertTriangle, Search, Check, X, ArrowRight, CornerDownRight, Loader2, ArrowRightLeft } from "lucide-react";
 import { toast } from "sonner";
-import api from "../api/client";
+import { assets as assetsApi, employees as empApi, transfers as transApi, allocations as allocApi } from "../api/endpoints";
 import { useAuth } from "../context/AuthContext";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -27,7 +27,7 @@ interface EmployeeOption {
 }
 
 export const AllocationPage: React.FC = () => {
-  const { isAdmin, isAssetManager, user } = useAuth();
+  const { isAdmin, isAssetManager } = useAuth();
   const queryClient = useQueryClient();
 
   // State
@@ -60,7 +60,7 @@ export const AllocationPage: React.FC = () => {
     queryKey: ["assets", "search", debouncedSearch],
     queryFn: async () => {
       if (!debouncedSearch) return [];
-      const { data } = await api.get(`/assets?search=${debouncedSearch}`);
+      const { data } = await assetsApi.getAssets({search: debouncedSearch});
       return data;
     },
     enabled: debouncedSearch.length > 0,
@@ -69,7 +69,7 @@ export const AllocationPage: React.FC = () => {
   const { data: employees = [] } = useQuery({
     queryKey: ["employees"],
     queryFn: async () => {
-      const { data } = await api.get("/employees");
+      const { data } = await empApi.getEmployees();
       return data;
     }
   });
@@ -77,7 +77,7 @@ export const AllocationPage: React.FC = () => {
   const { data: transfers = [], isLoading: transfersLoading } = useQuery({
     queryKey: ["transfers"],
     queryFn: async () => {
-      const { data } = await api.get("/transfers");
+      const { data } = await transApi.getTransfers();
       return data.filter((t: any) => t.status === "pending" || t.status === "requested"); // Adjust based on actual API enum
     }
   });
@@ -85,14 +85,14 @@ export const AllocationPage: React.FC = () => {
   const { data: allocations = [], isLoading: allocLoading } = useQuery({
     queryKey: ["allocations"],
     queryFn: async () => {
-      const { data } = await api.get("/allocations");
+      const { data } = await allocApi.getAllocations();
       return data;
     }
   });
 
   // Mutations
   const allocMutation = useMutation({
-    mutationFn: async (data: any) => await api.post("/allocations", data),
+    mutationFn: async (data: any) => await allocApi.createAllocation(data),
     onSuccess: () => {
       toast.success("Asset allocated successfully");
       resetAlloc();
@@ -111,7 +111,7 @@ export const AllocationPage: React.FC = () => {
   });
 
   const transferMutation = useMutation({
-    mutationFn: async (data: any) => await api.post("/transfers", data),
+    mutationFn: async (data: any) => await transApi.createTransfer(data),
     onSuccess: () => {
       toast.success("Transfer request submitted", { style: { background: "#F59E0B", color: "white", border: "none" } });
       resetTrans();
@@ -123,7 +123,7 @@ export const AllocationPage: React.FC = () => {
   });
 
   const approveMutation = useMutation({
-    mutationFn: async (id: string) => await api.post(`/transfers/${id}/approve`),
+    mutationFn: async (id: string) => await transApi.approveTransfer(id),
     onSuccess: () => {
       toast.success("Transfer approved");
       queryClient.invalidateQueries({ queryKey: ["transfers"] });
@@ -133,7 +133,7 @@ export const AllocationPage: React.FC = () => {
   });
 
   const rejectMutation = useMutation({
-    mutationFn: async ({ id, reason }: { id: string, reason: string }) => await api.post(`/transfers/${id}/reject`, { reason }),
+    mutationFn: async ({ id, reason }: { id: string, reason: string }) => await transApi.rejectTransfer(id, reason),
     onSuccess: () => {
       toast.success("Transfer rejected", { style: { background: "#F59E0B", color: "white", border: "none" } });
       setRejectModalOpen(false);
@@ -143,7 +143,7 @@ export const AllocationPage: React.FC = () => {
   });
 
   const returnMutation = useMutation({
-    mutationFn: async ({ id, notes }: { id: string, notes: string }) => await api.post(`/allocations/${id}/return`, { condition_notes: notes }),
+    mutationFn: async ({ id, notes }: { id: string, notes: string }) => await allocApi.returnAllocation(id, notes),
     onSuccess: () => {
       toast.success("Asset marked as returned");
       setReturnModalOpen(false);
