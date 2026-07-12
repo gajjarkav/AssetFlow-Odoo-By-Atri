@@ -371,13 +371,13 @@ async def get_asset_history(
             })
 
     # 2. Fetch Transfers
-    from src.models.transfer import Transfer
+    from src.models.transfer import TransferRequest
     from src.core.enums import TransferStatus
-    trans_stmt = select(Transfer).options(
-        joinedload(Transfer.requester),
-        joinedload(Transfer.from_employee),
-        joinedload(Transfer.to_employee)
-    ).where(Transfer.asset_id == id)
+    trans_stmt = select(TransferRequest).options(
+        joinedload(TransferRequest.requester),
+        joinedload(TransferRequest.from_user),
+        joinedload(TransferRequest.to_user)
+    ).where(TransferRequest.asset_id == id)
     transfers = (await db.execute(trans_stmt)).scalars().all()
 
     for t in transfers:
@@ -386,23 +386,23 @@ async def get_asset_history(
             "timestamp": t.requested_at,
             "user_name": t.requester.name if t.requester else None,
             "department_name": None,
-            "notes": f"Transfer requested from {t.from_employee.name if t.from_employee else 'Unknown'} to {t.to_employee.name if t.to_employee else 'Unknown'}",
+            "notes": f"Transfer requested from {t.from_user.name if t.from_user else 'Unknown'} to {t.to_user.name if t.to_user else 'Unknown'}",
         })
-        if t.status == TransferStatus.APPROVED and t.actioned_at:
+        if t.status == TransferStatus.APPROVED and t.decided_at:
             events.append({
                 "event_type": "TRANSFER_APPROVED",
-                "timestamp": t.actioned_at,
+                "timestamp": t.decided_at,
                 "user_name": None,
                 "department_name": None,
                 "notes": "Transfer approved",
             })
-        elif t.status == TransferStatus.REJECTED and t.actioned_at:
+        elif t.status == TransferStatus.REJECTED and t.decided_at:
              events.append({
                 "event_type": "TRANSFER_REJECTED",
-                "timestamp": t.actioned_at,
+                "timestamp": t.decided_at,
                 "user_name": None,
                 "department_name": None,
-                "notes": f"Transfer rejected: {t.rejection_reason or 'No reason'}",
+                "notes": f"Transfer rejected: {t.decision_notes or 'No reason'}",
             })
              
     # 3. Fetch Maintenance (Added for Module F)

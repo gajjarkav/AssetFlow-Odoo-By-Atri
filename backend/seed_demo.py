@@ -201,6 +201,66 @@ async def seed_demo_data():
         db.add(maintenance)
         await db.commit()
         
+        # 8. Create Demo Audit Cycle
+        print("Creating Demo Audit Cycle...")
+        from src.models.audit import AuditCycle, AuditItem
+        from src.core.enums import AuditCycleStatus, AuditScopeType, AuditResult
+        
+        audit_cycle = AuditCycle(
+            title="Q3 Engineering Audit",
+            scope_type=AuditScopeType.DEPARTMENT,
+            scope_value=str(eng.id),
+            start_date=datetime.now(timezone.utc).date() - timedelta(days=1),
+            end_date=datetime.now(timezone.utc).date() + timedelta(days=5),
+            status=AuditCycleStatus.OPEN,
+            created_by=am.id
+        )
+        db.add(audit_cycle)
+        await db.flush()
+        
+        item1 = AuditItem(
+            cycle_id=audit_cycle.id,
+            asset_id=laptop.id,
+            expected_location=laptop.location,
+            result=AuditResult.VERIFIED,
+            marked_by=am.id,
+            marked_at=datetime.now(timezone.utc)
+        )
+        item2 = AuditItem(
+            cycle_id=audit_cycle.id,
+            asset_id=projector.id,
+            expected_location=projector.location,
+            result=AuditResult.MISSING,
+            marked_by=am.id,
+            marked_at=datetime.now(timezone.utc)
+        )
+        db.add_all([item1, item2])
+        await db.commit()
+        
+        # 9. Create Notifications
+        print("Creating Demo Notifications...")
+        from src.models.notification import Notification
+        from src.core.enums import NotificationType
+        
+        n1 = Notification(
+            user_id=emp.id,
+            type=NotificationType.ASSET_ASSIGNED,
+            title="Asset Assigned",
+            message=f"{laptop.tag} was allocated to you.",
+            entity_type="allocation",
+            entity_id=alloc.id
+        )
+        n2 = Notification(
+            user_id=am.id,
+            type=NotificationType.MAINTENANCE_RAISED,
+            title="Maintenance Raised",
+            message=f"Maintenance requested for {projector.tag} by Arjun.",
+            entity_type="maintenance",
+            entity_id=maintenance.id
+        )
+        db.add_all([n1, n2])
+        await db.commit()
+        
         print("Demo data seeded successfully!")
         print("Users created (password for all is 'password123'):")
         print("- raj@assetflow.com (ASSET_MANAGER)")

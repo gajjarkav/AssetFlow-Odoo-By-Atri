@@ -9,7 +9,7 @@ from src.api.deps import get_current_user
 from src.models.user import User
 from src.models.asset import Asset
 from src.models.allocation import Allocation
-from src.models.transfer import Transfer
+from src.models.transfer import TransferRequest
 from src.models.booking import Booking
 from src.models.maintenance import MaintenanceRequest
 from src.core.enums import AssetStatus, AllocationStatus, TransferStatus, MaintenanceStatus, BookingStatus
@@ -53,7 +53,7 @@ async def get_dashboard(
 
     # 4. Pending Transfers
     pending_transfers = (await db.execute(
-        select(func.count()).where(Transfer.status == TransferStatus.REQUESTED)
+        select(func.count()).where(TransferRequest.status == TransferStatus.REQUESTED)
     )).scalar_one()
 
     # 5. Allocations (Upcoming vs Overdue)
