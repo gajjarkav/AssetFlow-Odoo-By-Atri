@@ -99,7 +99,14 @@ async def forgot_password(req: ForgotPasswordRequest, db: AsyncSession = Depends
     
     send_otp_email(user.email, otp)
     
-    return {"detail": "If an account exists, instructions were sent"}
+    from src.core.config import get_settings
+    settings = get_settings()
+    
+    response_data = {"detail": "If an account exists, instructions were sent"}
+    if settings.DEBUG:
+        response_data["dev_otp"] = otp
+        
+    return response_data
 
 @router.post("/reset-password")
 async def reset_password(req: ResetPasswordRequest, db: AsyncSession = Depends(get_db)):

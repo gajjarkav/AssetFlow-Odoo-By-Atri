@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.20.0",
+    "@theme-toggles/react": "^5.0.0-rc.0",
     "axios": "^1.6.7",
     "clsx": "^2.1.0",
     "dayjs": "^1.11.10",

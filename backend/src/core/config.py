@@ -15,7 +15,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    DEBUG: bool = Field(default=False, alias="app.debug")
+    DEBUG: bool = Field(default=False)
     
     # Database
     DATABASE_URL: str = Field(

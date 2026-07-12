@@ -35,7 +35,7 @@ const fetchDashboard = async (): Promise<DashboardResponse> => {
 };
 
 const DashboardPage: React.FC = () => {
-  const { isAdmin, isAssetManager } = useAuth();
+  const { user, isAdmin, isAssetManager } = useAuth();
   const navigate = useNavigate();
 
   const { data, isLoading, isError, error, refetch } = useQuery({
@@ -76,6 +76,23 @@ const DashboardPage: React.FC = () => {
       transition={{ duration: 0.4 }} 
       className="space-y-8 max-w-7xl mx-auto"
     >
+      {/* Welcome Banner */}
+      <div className="bg-gradient-to-r from-indigo-600 via-violet-600 to-pink-500 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-lg shadow-indigo-500/20">
+        <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
+        <div className="absolute left-1/3 bottom-0 translate-y-10 w-32 h-32 rounded-full bg-white/10 blur-xl" />
+        <div className="relative z-10 space-y-2">
+          <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase">
+            Overview
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            Hello, {user?.name || "User"}! 👋
+          </h2>
+          <p className="text-indigo-100 font-medium text-sm sm:text-base max-w-md">
+            Welcome back. Here is a summary of your organization's assets, bookings, and active maintenance requests.
+          </p>
+        </div>
+      </div>
+
       {stats && stats.overdue_returns > 0 && (
         <div className="bg-red-50 border border-red-200 border-l-4 border-l-red-500 rounded-lg p-4 flex items-center gap-3 shadow-md">
           <AlertTriangle className="text-red-600 shrink-0" size={24} />

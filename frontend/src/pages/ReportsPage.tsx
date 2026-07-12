@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Legend } from "recharts";
 import { motion } from "framer-motion";
 import { reports as repApi } from "../api/endpoints";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
@@ -34,7 +34,7 @@ const ReportsPage: React.FC = () => {
       {isLoading ? <div className="space-y-6"><LoadingSkeleton /><LoadingSkeleton /></div> : reports ? (
         <>
           {/* Charts Row */}
-          <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <motion.div variants={item}>
               <Card>
               <CardHeader>
@@ -67,6 +67,38 @@ const ReportsPage: React.FC = () => {
                     <Tooltip contentStyle={{backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'}} />
                     <Bar dataKey="request_count" fill="#EF4444" radius={[4, 4, 0, 0]} name="Maintenance Requests" />
                   </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div variants={item}>
+              <Card>
+              <CardHeader>
+                <CardTitle>Assets Distribution</CardTitle>
+              </CardHeader>
+              <CardContent className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={reports.utilization_by_department}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="total_assets"
+                      nameKey="department_name"
+                      stroke="none"
+                    >
+                      {reports.utilization_by_department?.map((entry: any, index: number) => {
+                        const WARM_COLORS = ['#FF6384', '#FF9F40', '#FFCD56', '#F43F5E', '#FB923C', '#FBBF24', '#E11D48'];
+                        return <Cell key={`cell-${index}`} fill={WARM_COLORS[index % WARM_COLORS.length]} />;
+                      })}
+                    </Pie>
+                    <Tooltip contentStyle={{backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'}} />
+                    <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '12px', color: '#64748B' }}/>
+                  </PieChart>
                 </ResponsiveContainer>
               </CardContent>
               </Card>

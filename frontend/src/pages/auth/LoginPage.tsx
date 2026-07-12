@@ -54,9 +54,14 @@ const LoginPage: React.FC = () => {
     setErrorMsg("");
     setSuccessMsg("");
     try {
-      await api.post("/auth/forgot-password", { email: data.email });
+      const response = await api.post("/auth/forgot-password", { email: data.email });
       setForgotEmail(data.email);
-      setSuccessMsg("OTP sent to your email");
+      if (response.data.dev_otp) {
+        setSuccessMsg(`[DEV] OTP is: ${response.data.dev_otp}`);
+        console.log("DEV OTP:", response.data.dev_otp);
+      } else {
+        setSuccessMsg("OTP sent to your email");
+      }
       setView("forgot_otp");
       setCountdown(60);
     } catch (err: any) {

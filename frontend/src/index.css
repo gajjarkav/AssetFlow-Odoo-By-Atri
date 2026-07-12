@@ -5,7 +5,8 @@
   --color-bg-card: #FFFFFF;
   --color-bg-sidebar: rgba(255, 255, 255, 0.8);
   --color-border-custom: #E2E8F0;
-  --color-primary: #4F46E5; /* Indigo 600 */
+  --color-primary: #4F46E5;
+  /* Indigo 600 */
   --color-primary-hover: #4338CA;
   --color-danger: #EF4444;
   --color-warning: #F59E0B;
@@ -27,14 +28,22 @@
 }
 
 @keyframes aurora {
-  0% { background-position: 50% 50%, 50% 50%; }
-  50% { background-position: 100% 50%, 0% 50%; }
-  100% { background-position: 50% 50%, 50% 50%; }
+  0% {
+    background-position: 50% 50%, 50% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%, 0% 50%;
+  }
+
+  100% {
+    background-position: 50% 50%, 50% 50%;
+  }
 }
 
 body {
   background-color: #FAFAFC;
-  background-image: 
+  background-image:
     radial-gradient(ellipse at 100% 0%, hsla(250, 100%, 75%, 0.15) 0%, transparent 50%),
     radial-gradient(ellipse at 0% 100%, hsla(190, 100%, 60%, 0.15) 0%, transparent 50%),
     radial-gradient(ellipse at 50% 50%, hsla(330, 100%, 80%, 0.1) 0%, transparent 60%);
@@ -52,7 +61,10 @@ body {
 body::before {
   content: "";
   position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
   z-index: 9999;
@@ -63,13 +75,144 @@ body::before {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #CBD5E1;
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #94A3B8;
+}
+
+/* Theme Transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+.dark::view-transition-old(root) {
+  z-index: 2;
+}
+
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* Dark mode theme variables */
+html.dark {
+  --bg-base: #18122B;
+  --bg-card: #393053;
+  --bg-sidebar: rgba(57, 48, 83, 0.85);
+  --border: #443C68;
+  --primary: #635985;
+  --primary-hover: #443C68;
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+}
+
+/* Dark mode basic variables/overrides */
+html.dark body {
+  background-color: #18122B !important;
+  color: #F8FAFC !important;
+  background-image:
+    radial-gradient(ellipse at 100% 0%, hsla(250, 40%, 30%, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 100%, hsla(190, 40%, 20%, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, hsla(330, 40%, 30%, 0.1) 0%, transparent 60%) !important;
+}
+
+html.dark .bg-white {
+  background-color: #393053 !important;
+}
+
+html.dark .bg-slate-50 {
+  background-color: #18122B !important;
+}
+
+html.dark .border-slate-100,
+html.dark .border-slate-200 {
+  border-color: #443C68 !important;
+}
+
+html.dark .text-slate-800,
+html.dark .text-slate-900 {
+  color: #F8FAFC !important;
+}
+
+html.dark .text-slate-700,
+html.dark .text-slate-600 {
+  color: #E2E8F0 !important;
+}
+
+html.dark .text-slate-500,
+html.dark .text-slate-400 {
+  color: #CBD5E1 !important;
+}
+
+html.dark .bg-white\/70,
+html.dark .bg-white\/50,
+html.dark .bg-white\/30 {
+  background-color: rgba(57, 48, 83, 0.7) !important;
+}
+
+html.dark .hover\:bg-slate-50:hover {
+  background-color: #443C68 !important;
+}
+
+html.dark .hover\:bg-slate-100\/50:hover {
+  background-color: rgba(68, 60, 104, 0.5) !important;
+}
+
+html.dark .hover\:bg-indigo-50\/50:hover {
+  background-color: rgba(99, 89, 133, 0.2) !important;
+}
+
+html.dark .hover\:border-indigo-300:hover {
+  border-color: #635985 !important;
+}
+
+html.dark .bg-indigo-600 {
+  background-color: #635985 !important;
+}
+
+html.dark .hover\:bg-indigo-700:hover {
+  background-color: #443C68 !important;
+}
+
+html.dark .text-indigo-600 {
+  color: #635985 !important;
+}
+
+html.dark .text-indigo-700 {
+  color: #CBD5E1 !important;
+}
+
+html.dark .bg-indigo-50 {
+  background-color: #443C68 !important;
+}
+
+html.dark .bg-indigo-100 {
+  background-color: #393053 !important;
+}
+
+/* Custom Scrollbar for Dark Theme */
+html.dark ::-webkit-scrollbar-thumb {
+  background: #443C68;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #635985;
 }

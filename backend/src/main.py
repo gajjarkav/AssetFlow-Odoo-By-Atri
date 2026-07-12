@@ -50,9 +50,10 @@ cors_origins = [o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
+    allow_origin_regex=".*", # allow all for ngrok dynamically
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type", "Accept"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(api_router, prefix=API_PREFIX)

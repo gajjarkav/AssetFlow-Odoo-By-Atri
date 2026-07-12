@@ -55,7 +55,7 @@ export const AppRoutes = () => {
                 <Route path="/reports" element={<ReportsPage />} />
                 <Route path="/notifications" element={<NotificationsPage />} />
                 <Route path="/transfers" element={<TransfersPage />} />
-                
+
                 <Route path="/org" element={
                   <AdminRoute>
                     <OrgSetupPage />
