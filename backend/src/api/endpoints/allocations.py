@@ -70,14 +70,7 @@ async def allocate_asset(
             detail={"detail": "Shared resources must be booked, not allocated", "code": "ASSET_IS_SHARED"}
         )
         
-    # 3. Check if available / not in maintenance/retired
-    if asset.status != AssetStatus.AVAILABLE:
-        raise HTTPException(
-            status_code=400,
-            detail={"detail": "Asset is not available for allocation", "code": "ASSET_NOT_AVAILABLE"}
-        )
-        
-    # 4. Check double-allocation constraint
+    # 3. Check double-allocation constraint
     active_stmt = (
         select(Allocation)
         .options(joinedload(Allocation.employee), joinedload(Allocation.department))
@@ -111,6 +104,13 @@ async def allocate_asset(
                 "asset_id": str(asset.id),
                 "asset_tag": asset.tag
             }
+        )
+
+    # 4. Check if available / not in maintenance/retired
+    if asset.status != AssetStatus.AVAILABLE:
+        raise HTTPException(
+            status_code=400,
+            detail={"detail": "Asset is not available for allocation", "code": "ASSET_NOT_AVAILABLE"}
         )
 
     # 5. Validate targets

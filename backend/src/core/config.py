@@ -35,6 +35,10 @@ class Settings(BaseSettings):
     SMTP_USER: Optional[str] = Field(default=None)
     SMTP_PASSWORD: Optional[str] = Field(default=None)
 
+    # App branding & CORS
+    APP_NAME: str = Field(default="AssetFlow")
+    CORS_ORIGINS: str = Field(default="http://localhost:5173,http://localhost:3000")
+
 
 @cache
 def get_settings() -> Settings:
