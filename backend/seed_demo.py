@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime, timezone, timedelta
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.session import AsyncSessionLocal
@@ -6,8 +7,10 @@ from src.models.department import Department
 from src.models.category import Category
 from src.models.user import User
 from src.models.asset import Asset
+from src.models.allocation import Allocation
+from src.models.booking import Booking
 from src.core.security import get_password_hash
-from src.core.enums import UserRole, AssetStatus
+from src.core.enums import UserRole, AssetStatus, AllocationStatus, BookingStatus
 
 async def seed_demo_data():
     async with AsyncSessionLocal() as db:
@@ -71,6 +74,7 @@ async def seed_demo_data():
         db.add_all([am, dh, emp])
         await db.commit()
         await db.refresh(am)
+        await db.refresh(emp)
         
         # Set Dept Heads
         eng.head_id = dh.id
@@ -88,7 +92,7 @@ async def seed_demo_data():
             condition="GOOD",
             location="Longhorn",
             is_shared=False,
-            status=AssetStatus.AVAILABLE,
+            status=AssetStatus.ALLOCATED,  # Allocated to Arjun
             department_id=eng.id,
             created_by=am.id
         )
@@ -135,7 +139,66 @@ async def seed_demo_data():
             created_by=am.id
         )
         
-        db.add_all([laptop, projector, room, chair])
+        assets = [laptop, projector, room, chair]
+        db.add_all(assets)
+        await db.commit()
+        await db.refresh(laptop)
+        
+        # 5. Create Demo Allocation (Laptop to Arjun)
+        print("Creating Demo Allocation...")
+        
+        # 1. Normal active allocation for Laptop
+        alloc = Allocation(
+            asset_id=laptop.id,
+            employee_id=emp.id,
+            department_id=emp.department_id,
+            allocated_by=am.id,
+            expected_return=datetime.now(timezone.utc) + timedelta(days=30),
+            status=AllocationStatus.ACTIVE,
+        )
+        db.add(alloc)
+        laptop.status = AssetStatus.ALLOCATED
+        
+        # 2. Overdue allocation for Chair to trigger dashboard banner
+        overdue_alloc = Allocation(
+            asset_id=chair.id,
+            employee_id=emp.id,
+            department_id=emp.department_id,
+            allocated_by=am.id,
+            expected_return=datetime.now(timezone.utc) - timedelta(days=3),
+            status=AllocationStatus.ACTIVE,
+        )
+        chair.status = AssetStatus.ALLOCATED
+        db.add(overdue_alloc)
+        await db.commit()
+        
+        # 6. Create Demo Booking — Room B2 booked by Arjun (starts in 1 hour)
+        print("Creating Demo Booking...")
+        now_dt = datetime.now(timezone.utc)
+        booking = Booking(
+            asset_id=room.id,
+            user_id=emp.id,
+            start_at=now_dt + timedelta(hours=1),
+            end_at=now_dt + timedelta(hours=2),
+            purpose="Procurement standup",
+            status=BookingStatus.UPCOMING,
+        )
+        db.add(booking)
+        await db.commit()
+        
+        # 7. Create Demo Maintenance Request — Projector (AF-000062) raised by Arjun
+        print("Creating Demo Maintenance Request...")
+        from src.models.maintenance import MaintenanceRequest
+        from src.core.enums import MaintenancePriority, MaintenanceStatus
+        
+        maintenance = MaintenanceRequest(
+            asset_id=projector.id,
+            raised_by=emp.id,
+            description="Projector lamp is flickering heavily, needs replacement.",
+            priority=MaintenancePriority.HIGH,
+            status=MaintenanceStatus.PENDING,
+        )
+        db.add(maintenance)
         await db.commit()
         
         print("Demo data seeded successfully!")
@@ -143,7 +206,9 @@ async def seed_demo_data():
         print("- raj@assetflow.com (ASSET_MANAGER)")
         print("- priya@assetflow.com (DEPARTMENT_HEAD)")
         print("- arjun@assetflow.com (EMPLOYEE)")
-        print("Assets seeded: AF-000114, AF-000062, AF-000003, AF-000201")
+        print("Assets seeded: AF-000114 (Allocated to Arjun), AF-000062 (Projector with Maintenance), AF-000003, AF-000201")
+        print("Booking seeded: Room B2 booked by Arjun 09:00–10:00 IST")
+        print("Maintenance seeded: High priority request on Projector by Arjun")
 
 if __name__ == "__main__":
     asyncio.run(seed_demo_data())
