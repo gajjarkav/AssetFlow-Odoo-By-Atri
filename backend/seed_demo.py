@@ -169,13 +169,29 @@ async def seed_demo_data():
         db.add(booking)
         await db.commit()
         
+        # 7. Create Demo Maintenance Request — Projector (AF-000062) raised by Arjun
+        print("Creating Demo Maintenance Request...")
+        from src.models.maintenance import MaintenanceRequest
+        from src.core.enums import MaintenancePriority, MaintenanceStatus
+        
+        maintenance = MaintenanceRequest(
+            asset_id=projector.id,
+            raised_by=emp.id,
+            description="Projector lamp is flickering heavily, needs replacement.",
+            priority=MaintenancePriority.HIGH,
+            status=MaintenanceStatus.PENDING,
+        )
+        db.add(maintenance)
+        await db.commit()
+        
         print("Demo data seeded successfully!")
         print("Users created (password for all is 'password123'):")
         print("- raj@assetflow.com (ASSET_MANAGER)")
         print("- priya@assetflow.com (DEPARTMENT_HEAD)")
         print("- arjun@assetflow.com (EMPLOYEE)")
-        print("Assets seeded: AF-000114 (Allocated to Arjun), AF-000062, AF-000003, AF-000201")
+        print("Assets seeded: AF-000114 (Allocated to Arjun), AF-000062 (Projector with Maintenance), AF-000003, AF-000201")
         print("Booking seeded: Room B2 booked by Arjun 09:00–10:00 IST")
+        print("Maintenance seeded: High priority request on Projector by Arjun")
 
 if __name__ == "__main__":
     asyncio.run(seed_demo_data())

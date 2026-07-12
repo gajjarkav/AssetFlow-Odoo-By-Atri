@@ -332,89 +332,125 @@ async def update_asset(
 async def get_asset_history(
     id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """
-    Get the history timeline of an asset, including allocations, transfers, and maintenance logs.
+    Returns a chronologically sorted timeline of asset events:
+    - Allocations (Allocated / Returned / Revoked)
+    - Transfers (Requested / Approved / Rejected)
+    - Maintenance (Pending / Approved / In Progress / Resolved)
     """
     asset = await db.get(Asset, id)
     if not asset:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Asset not found"
-        )
+        raise HTTPException(status_code=404, detail="Asset not found")
+
+    events = []
+
+    # 1. Fetch Allocations
+    alloc_stmt = select(Allocation).options(
+        joinedload(Allocation.employee),
+        joinedload(Allocation.department)
+    ).where(Allocation.asset_id == id)
+    allocs = (await db.execute(alloc_stmt)).scalars().all()
+    
+    for a in allocs:
+        events.append({
+            "event_type": "ALLOCATION_CREATED",
+            "timestamp": a.allocated_at,
+            "user_name": a.employee.name if a.employee else None,
+            "department_name": a.department.name if a.department else None,
+            "notes": f"Allocated to {a.employee.name if a.employee else a.department.name if a.department else 'Unknown'}",
+        })
+        if a.returned_at:
+            events.append({
+                "event_type": "ALLOCATION_RETURNED",
+                "timestamp": a.returned_at,
+                "user_name": a.employee.name if a.employee else None,
+                "department_name": None,
+                "notes": f"Returned: {a.return_condition or 'No notes'}",
+            })
+
+    # 2. Fetch Transfers
+    from src.models.transfer import Transfer
+    from src.core.enums import TransferStatus
+    trans_stmt = select(Transfer).options(
+        joinedload(Transfer.requester),
+        joinedload(Transfer.from_employee),
+        joinedload(Transfer.to_employee)
+    ).where(Transfer.asset_id == id)
+    transfers = (await db.execute(trans_stmt)).scalars().all()
+
+    for t in transfers:
+        events.append({
+            "event_type": "TRANSFER_REQUESTED",
+            "timestamp": t.requested_at,
+            "user_name": t.requester.name if t.requester else None,
+            "department_name": None,
+            "notes": f"Transfer requested from {t.from_employee.name if t.from_employee else 'Unknown'} to {t.to_employee.name if t.to_employee else 'Unknown'}",
+        })
+        if t.status == TransferStatus.APPROVED and t.actioned_at:
+            events.append({
+                "event_type": "TRANSFER_APPROVED",
+                "timestamp": t.actioned_at,
+                "user_name": None,
+                "department_name": None,
+                "notes": "Transfer approved",
+            })
+        elif t.status == TransferStatus.REJECTED and t.actioned_at:
+             events.append({
+                "event_type": "TRANSFER_REJECTED",
+                "timestamp": t.actioned_at,
+                "user_name": None,
+                "department_name": None,
+                "notes": f"Transfer rejected: {t.rejection_reason or 'No reason'}",
+            })
+             
+    # 3. Fetch Maintenance (Added for Module F)
+    from src.models.maintenance import MaintenanceRequest
+    from src.core.enums import MaintenanceStatus
+    
+    maint_stmt = select(MaintenanceRequest).options(
+        joinedload(MaintenanceRequest.raiser),
+        joinedload(MaintenanceRequest.approver)
+    ).where(MaintenanceRequest.asset_id == id)
+    maintenance_reqs = (await db.execute(maint_stmt)).scalars().all()
+    
+    for m in maintenance_reqs:
+        events.append({
+            "event_type": "MAINTENANCE_RAISED",
+            "timestamp": m.created_at,
+            "user_name": m.raiser.name if m.raiser else None,
+            "department_name": None,
+            "notes": f"Maintenance raised: {m.description} (Priority: {m.priority.value})",
+        })
         
-    # Query allocations
-    allocs_stmt = (
-        select(Allocation)
-        .options(joinedload(Allocation.employee))
-        .where(Allocation.asset_id == id)
-        .order_by(Allocation.allocated_at.desc())
-    )
-    allocs_res = await db.execute(allocs_stmt)
-    allocs = allocs_res.scalars().all()
-    
-    # Query transfers
-    trans_stmt = (
-        select(TransferRequest)
-        .where(TransferRequest.asset_id == id)
-        .order_by(TransferRequest.requested_at.desc())
-    )
-    trans_res = await db.execute(trans_stmt)
-    trans = trans_res.scalars().all()
-    
-    # Query maintenance requests
-    maint_stmt = (
-        select(MaintenanceRequest)
-        .where(MaintenanceRequest.asset_id == id)
-        .order_by(MaintenanceRequest.requested_at.desc())
-    )
-    maint_res = await db.execute(maint_stmt)
-    maints = maint_res.scalars().all()
-    
-    # Map to schema stubs
-    alloc_stubs = [
-        {
-            "id": a.id,
-            "employee_id": a.employee_id,
-            "employee_name": a.employee.name if a.employee else None,
-            "department_id": a.department_id,
-            "allocated_at": a.allocated_at,
-            "expected_return": a.expected_return,
-            "returned_at": a.returned_at,
-            "status": a.status.value
-        }
-        for a in allocs
-    ]
-    
-    trans_stubs = [
-        {
-            "id": t.id,
-            "from_user_id": t.from_user_id,
-            "to_user_id": t.to_user_id,
-            "status": t.status.value,
-            "requested_at": t.requested_at,
-            "resolved_at": t.decided_at
-        }
-        for t in trans
-    ]
-    
-    maint_stubs = [
-        {
-            "id": m.id,
-            "issue_description": m.issue_description,
-            "priority": m.priority,
-            "status": m.status.value,
-            "requested_at": m.requested_at,
-            "resolved_at": m.resolved_at
-        }
-        for m in maints
-    ]
-    
-    return AssetHistoryResponse(
-        asset_id=asset.id,
-        tag=asset.tag,
-        allocations=alloc_stubs,
-        maintenance=maint_stubs,
-        transfers=trans_stubs
-    )
+        if m.approved_at and m.status in (MaintenanceStatus.APPROVED, MaintenanceStatus.IN_PROGRESS, MaintenanceStatus.RESOLVED):
+            events.append({
+                "event_type": "MAINTENANCE_APPROVED",
+                "timestamp": m.approved_at,
+                "user_name": m.approver.name if m.approver else None,
+                "department_name": None,
+                "notes": f"Maintenance approved. Tech: {m.technician_name or 'TBD'}",
+            })
+            
+        if m.resolved_at and m.status == MaintenanceStatus.RESOLVED:
+            events.append({
+                "event_type": "MAINTENANCE_RESOLVED",
+                "timestamp": m.resolved_at,
+                "user_name": None,
+                "department_name": None,
+                "notes": f"Maintenance resolved: {m.resolution_notes or 'No notes'}",
+            })
+        elif m.status == MaintenanceStatus.REJECTED and m.updated_at:
+            events.append({
+                "event_type": "MAINTENANCE_REJECTED",
+                "timestamp": m.updated_at,
+                "user_name": None,
+                "department_name": None,
+                "notes": f"Maintenance rejected: {m.rejection_reason or 'No reason'}",
+            })
+
+    # Sort events chronologically (descending)
+    events.sort(key=lambda x: x["timestamp"], reverse=True)
+
+    return AssetHistoryResponse(events=events)
