@@ -77,12 +77,12 @@ export const DialogContent = React.forwardRef<
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/20 backdrop-blur-md p-4">
       <div className="fixed inset-0 z-40" onClick={() => onOpenChange(false)} />
       <div
         ref={ref}
         className={cn(
-          "relative z-50 w-full max-w-lg bg-[#1A1A22] border border-[#2A2A38] p-6 shadow-lg duration-200 rounded-xl",
+          "relative z-50 w-full max-w-lg bg-white border border-slate-200 p-6 shadow-2xl duration-200 rounded-2xl",
           className
         )}
         {...props}
@@ -90,7 +90,7 @@ export const DialogContent = React.forwardRef<
         {children}
         <button
           onClick={() => onOpenChange(false)}
-          className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none text-[#94A3B8]"
+          className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 hover:bg-slate-100 p-1 focus:outline-none disabled:pointer-events-none text-slate-500"
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
@@ -129,7 +129,7 @@ export const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h2
     ref={ref}
-    className={cn("text-lg font-semibold leading-none tracking-tight text-[#F8FAFC]", className)}
+    className={cn("text-lg font-bold leading-none tracking-tight text-slate-900", className)}
     {...props}
   />
 ))
@@ -141,7 +141,7 @@ export const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-[#94A3B8] mt-2", className)}
+    className={cn("text-sm text-slate-500 mt-2", className)}
     {...props}
   />
 ))

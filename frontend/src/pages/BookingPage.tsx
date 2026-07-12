@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { Calendar as CalendarIcon, AlertCircle, X, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 import { resources as resourcesApi } from "../api/endpoints";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
 import { LoadingSkeleton } from "../components/ui/LoadingSkeleton";
@@ -76,12 +77,26 @@ const BookingPage: React.FC = () => {
 
   const selectedResourceData = sharedResources?.find((r: any) => r.id === selectedResourceId);
 
+  const container: any = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+  };
+  const item: any = {
+    hidden: { opacity: 0, x: -20 },
+    show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="space-y-6 max-w-5xl mx-auto relative">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.4 }} 
+      className="space-y-6 max-w-5xl mx-auto relative"
+    >
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#F8FAFC]">Resource Booking</h1>
-          <p className="text-sm text-[#94A3B8]">Time-slot booking for shared resources</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Resource Booking</h1>
+          <p className="text-sm text-slate-500">Time-slot booking for shared resources</p>
         </div>
         <Button className="gap-2" onClick={() => setIsModalOpen(true)}>
           <CalendarIcon size={16} /> Book a Slot
@@ -111,9 +126,9 @@ const BookingPage: React.FC = () => {
           {isLoading ? <LoadingSkeleton /> : (
             <div className="relative mt-4">
               {/* Timeline background */}
-              <div className="absolute left-16 top-0 bottom-0 w-px bg-[#2A2A38]"></div>
+              <div className="absolute left-16 top-0 bottom-0 w-px bg-slate-200"></div>
               
-              <div className="space-y-6">
+              <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
                 {[8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18].map(hour => {
                   const hourStr = `${hour}:00`;
                   
@@ -126,7 +141,7 @@ const BookingPage: React.FC = () => {
                   });
                   
                   return (
-                    <div key={hour} className="relative flex items-start gap-8">
+                    <motion.div variants={item} key={hour} className="relative flex items-start gap-8">
                       <div className="w-12 text-right text-sm text-[#94A3B8] pt-2 shrink-0">{hourStr}</div>
                       <div className="relative w-full min-h-[60px] border-t border-[#2A2A38]/50 pt-2">
                         {bookingsForHour?.map((b: any, i: number) => (
@@ -136,19 +151,19 @@ const BookingPage: React.FC = () => {
                             style={{ top: `${8 + (i * 5)}px` }}
                           >
                             <div className="flex justify-between items-center">
-                              <span className="font-semibold text-blue-400">Booked - {b.user_name}</span>
-                              <span className="text-xs text-blue-400/80 hidden sm:block">
+                              <span className="font-semibold text-blue-600">Booked - {b.user_name}</span>
+                              <span className="text-xs text-blue-600/80 hidden sm:block">
                                 {dayjs(b.start_at).format("h:mm A")} - {dayjs(b.end_at).format("h:mm A")}
                               </span>
                             </div>
-                            {b.purpose && <p className="text-xs text-blue-400/60 mt-1">{b.purpose}</p>}
+                            {b.purpose && <p className="text-xs text-blue-500/80 mt-1">{b.purpose}</p>}
                           </div>
                         ))}
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
-              </div>
+              </motion.div>
             </div>
           )}
         </CardContent>
@@ -229,7 +244,7 @@ const BookingPage: React.FC = () => {
         </div>
       )}
 
-    </div>
+    </motion.div>
   );
 };
 

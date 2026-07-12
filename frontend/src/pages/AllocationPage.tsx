@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import { AlertTriangle, Search, Check, X, ArrowRight, CornerDownRight, Loader2, ArrowRightLeft } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 import { assets as assetsApi, employees as empApi, transfers as transApi, allocations as allocApi } from "../api/endpoints";
 import { useAuth } from "../context/AuthContext";
 import { StatusBadge } from "../components/ui/StatusBadge";
@@ -176,8 +177,22 @@ export const AllocationPage: React.FC = () => {
   const isConflict = selectedAsset && (selectedAsset.status === "allocated" || conflictHolder);
   const actualHolderName = conflictHolder || selectedAsset?.current_holder_name || "Unknown User";
 
+  const container: any = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+  const item: any = {
+    hidden: { opacity: 0, x: 20 },
+    show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="space-y-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.4 }} 
+      className="space-y-6"
+    >
       
       {/* Top 2 columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
@@ -197,9 +212,9 @@ export const AllocationPage: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search by tag (e.g. AF-0114) or name..."
-                  className="w-full bg-[var(--bg-base)] border border-[var(--border)] focus:border-[var(--primary)] focus:outline-none rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-[var(--text-muted)] transition-colors"
+                  className="w-full bg-white border border-slate-200 focus:border-indigo-500 focus:outline-none rounded-lg pl-10 pr-4 py-2.5 text-slate-900 placeholder-slate-400 transition-all shadow-sm"
                 />
-                {searching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-[var(--primary)]" size={18} />}
+                {searching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-indigo-500" size={18} />}
               </div>
               
               {/* Dropdown Results */}
@@ -236,7 +251,7 @@ export const AllocationPage: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-3">
                   <StatusBadge status={selectedAsset.status} />
-                  <button onClick={() => { setSelectedAsset(null); setConflictHolder(null); }} className="text-[var(--text-muted)] hover:text-white">
+                  <button onClick={() => { setSelectedAsset(null); setConflictHolder(null); }} className="text-slate-400 hover:text-slate-900">
                     <X size={18} />
                   </button>
                 </div>
@@ -251,7 +266,7 @@ export const AllocationPage: React.FC = () => {
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Assign To</label>
                 <select 
                   {...regAlloc("user_id", { required: "Employee is required" })}
-                  className="w-full bg-[var(--bg-base)] border border-[var(--border)] focus:border-[var(--primary)] focus:outline-none rounded-lg px-4 py-2.5 text-white"
+                  className="w-full bg-white border border-slate-200 focus:border-indigo-500 focus:outline-none rounded-lg px-4 py-2.5 text-slate-900 shadow-sm"
                 >
                   <option value="">Select an employee...</option>
                   {employees.map((e: EmployeeOption) => (
@@ -267,7 +282,7 @@ export const AllocationPage: React.FC = () => {
                   type="date"
                   min={new Date().toISOString().split('T')[0]}
                   {...regAlloc("expected_return_date", { required: "Return date is required" })}
-                  className="w-full bg-[var(--bg-base)] border border-[var(--border)] focus:border-[var(--primary)] focus:outline-none rounded-lg px-4 py-2.5 text-white"
+                  className="w-full bg-white border border-slate-200 focus:border-indigo-500 focus:outline-none rounded-lg px-4 py-2.5 text-slate-900 shadow-sm"
                 />
                 {allocErrs.expected_return_date && <p className="mt-1 text-sm text-[var(--danger)]">{String(allocErrs.expected_return_date.message)}</p>}
               </div>
@@ -276,7 +291,7 @@ export const AllocationPage: React.FC = () => {
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Notes (Optional)</label>
                 <textarea 
                   {...regAlloc("notes")}
-                  className="w-full bg-[var(--bg-base)] border border-[var(--border)] focus:border-[var(--primary)] focus:outline-none rounded-lg px-4 py-2.5 text-white min-h-[80px] resize-none"
+                  className="w-full bg-white border border-slate-200 focus:border-indigo-500 focus:outline-none rounded-lg px-4 py-2.5 text-slate-900 min-h-[80px] resize-none shadow-sm"
                   placeholder="Any condition notes or accessories included..."
                 />
               </div>
@@ -293,14 +308,14 @@ export const AllocationPage: React.FC = () => {
 
           {/* CONFLICT PANEL */}
           {isConflict && (
-            <div className="bg-[#EF4444]/10 border border-[#EF4444]/30 border-l-4 border-l-[#EF4444] rounded-xl p-5 shadow-lg animate-in zoom-in-95 duration-300">
+            <div className="bg-red-50 border border-red-200 border-l-4 border-l-red-500 rounded-xl p-5 shadow-sm animate-in zoom-in-95 duration-300">
               <div className="flex items-start gap-4 mb-4">
-                <div className="bg-[#EF4444]/20 p-2 rounded-full shrink-0">
-                  <AlertTriangle className="text-[#EF4444]" size={28} />
+                <div className="bg-red-100 p-2 rounded-full shrink-0 shadow-sm">
+                  <AlertTriangle className="text-red-600" size={28} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[#EF4444]">Asset Currently Unavailable</h3>
-                  <p className="text-[#F8FAFC] mt-1 text-[15px]">
+                  <h3 className="text-xl font-bold text-red-700">Asset Currently Unavailable</h3>
+                  <p className="text-slate-800 mt-1 text-[15px]">
                     This asset is currently held by <span className="font-bold">{actualHolderName}</span>.
                   </p>
                   <p className="text-[var(--text-secondary)] text-sm mt-1">
@@ -309,14 +324,14 @@ export const AllocationPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-[var(--bg-base)]/50 rounded-lg p-4 border border-[var(--border)] mt-6">
-                <h4 className="font-medium text-white mb-3">Submit Transfer Request</h4>
+              <div className="bg-white rounded-lg p-4 border border-slate-200 mt-6 shadow-sm">
+                <h4 className="font-bold text-slate-900 mb-3">Submit Transfer Request</h4>
                 <form onSubmit={handleTransSubmit(onTransfer)} className="space-y-4">
                   <div>
                     <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Transfer To</label>
                     <select 
                       {...regTrans("to_user_id", { required: "Recipient is required" })}
-                      className="w-full bg-[var(--bg-card)] border border-[var(--border)] focus:border-[#F59E0B] focus:outline-none rounded-lg px-3 py-2 text-white text-sm"
+                      className="w-full bg-white border border-slate-200 focus:border-amber-500 focus:outline-none rounded-lg px-3 py-2 text-slate-900 text-sm shadow-sm"
                     >
                       <option value="">Select employee...</option>
                       {employees.map((e: EmployeeOption) => (
@@ -329,7 +344,7 @@ export const AllocationPage: React.FC = () => {
                     <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Reason for transfer</label>
                     <textarea 
                       {...regTrans("reason", { required: "Reason is required", minLength: { value: 20, message: "Minimum 20 characters" } })}
-                      className="w-full bg-[var(--bg-card)] border border-[var(--border)] focus:border-[#F59E0B] focus:outline-none rounded-lg px-3 py-2 text-white text-sm min-h-[60px] resize-none"
+                      className="w-full bg-white border border-slate-200 focus:border-amber-500 focus:outline-none rounded-lg px-3 py-2 text-slate-900 text-sm min-h-[60px] resize-none shadow-sm"
                       placeholder="Explain why this transfer is needed urgently..."
                     />
                     {transErrs.reason && <p className="mt-1 text-xs text-[var(--danger)]">{String(transErrs.reason.message)}</p>}
@@ -337,7 +352,7 @@ export const AllocationPage: React.FC = () => {
                   <button 
                     type="submit" 
                     disabled={transferMutation.isPending}
-                    className="w-full bg-[#F59E0B]/20 border border-[#F59E0B]/30 hover:bg-[#F59E0B]/30 text-[#F59E0B] font-semibold rounded-lg py-2.5 flex items-center justify-center transition-colors"
+                    className="w-full bg-amber-50 border border-amber-200 hover:bg-amber-100 text-amber-700 font-bold rounded-lg py-2.5 flex items-center justify-center transition-all shadow-sm"
                   >
                     {transferMutation.isPending ? <Loader2 className="animate-spin" size={18} /> : "Submit Transfer Request"}
                   </button>
@@ -362,16 +377,17 @@ export const AllocationPage: React.FC = () => {
             ) : transfers.length === 0 ? (
               <div className="py-8"><EmptyState icon={ArrowRightLeft} message="No pending transfers" /></div>
             ) : (
-              transfers.map((t: any) => (
-                <div key={t.id} className="bg-[var(--bg-base)] border border-[var(--border)] rounded-lg p-4 transition-all hover:border-[var(--primary)]/30">
+              <motion.div variants={container} initial="hidden" animate="show" className="space-y-3">
+                {transfers.map((t: any) => (
+                  <motion.div variants={item} key={t.id} className="bg-[var(--bg-base)] border border-[var(--border)] rounded-lg p-4 transition-all hover:border-[var(--primary)]/30">
                   <div className="flex justify-between items-start mb-2">
-                    <p className="font-semibold text-white">[{t.asset_tag || "ASSET"}] {t.asset_name}</p>
-                    <span className="text-xs text-[var(--text-muted)]">{dayjs(t.created_at).format("MMM D")}</span>
+                    <p className="font-bold text-slate-800">[{t.asset_tag || "ASSET"}] {t.asset_name}</p>
+                    <span className="text-xs text-[var(--text-muted)] font-medium">{dayjs(t.created_at).format("MMM D")}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)] mb-3">
+                  <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)] mb-3 font-medium">
                     <span>{t.from_user_name}</span>
                     <ArrowRight size={14} className="text-[var(--text-muted)]" />
-                    <span className="text-white">{t.to_user_name}</span>
+                    <span className="text-slate-800 font-bold">{t.to_user_name}</span>
                   </div>
                   <div className="bg-[var(--bg-card)] border-l-2 border-l-amber-500 p-2 rounded text-xs text-[var(--text-muted)] italic mb-4 flex items-start gap-2">
                     <CornerDownRight size={12} className="shrink-0 mt-0.5" />
@@ -383,20 +399,21 @@ export const AllocationPage: React.FC = () => {
                       <button 
                         onClick={() => approveMutation.mutate(t.id)}
                         disabled={approveMutation.isPending}
-                        className="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 py-1.5 rounded-lg text-sm font-medium flex items-center justify-center gap-1 transition-colors"
+                        className="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 py-1.5 rounded-lg text-sm font-bold flex items-center justify-center gap-1 transition-colors shadow-sm"
                       >
                         <Check size={16} /> Approve
                       </button>
                       <button 
                         onClick={() => { setTransferToReject(t.id); setRejectModalOpen(true); }}
-                        className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 py-1.5 rounded-lg text-sm font-medium flex items-center justify-center gap-1 transition-colors"
+                        className="flex-1 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 py-1.5 rounded-lg text-sm font-bold flex items-center justify-center gap-1 transition-colors shadow-sm"
                       >
                         <X size={16} /> Reject
                       </button>
                     </div>
                   )}
-                </div>
-              ))
+                  </motion.div>
+                ))}
+              </motion.div>
             )}
           </div>
         </div>
@@ -434,8 +451,8 @@ export const AllocationPage: React.FC = () => {
                 allocations.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).map((alloc: any) => (
                   <tr key={alloc.id} className="border-b border-[var(--border)] hover:bg-[var(--bg-base)]/50 transition-colors">
                     <td className="p-4">
-                      <p className="font-medium text-white">{alloc.asset_tag || "ASSET"}</p>
-                      <p className="text-[var(--text-muted)] text-xs">{alloc.asset_name}</p>
+                      <p className="font-bold text-slate-800">{alloc.asset_tag || "ASSET"}</p>
+                      <p className="text-slate-500 font-medium text-xs">{alloc.asset_name}</p>
                     </td>
                     <td className="p-4 text-[var(--text-primary)]">{alloc.user_name}</td>
                     <td className="p-4 text-[var(--text-secondary)]">{dayjs(alloc.created_at).format("MMM D, YYYY")}</td>
@@ -467,7 +484,7 @@ export const AllocationPage: React.FC = () => {
             <textarea 
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
-              className="w-full bg-[var(--bg-base)] border border-[var(--border)] focus:border-[var(--danger)] focus:outline-none rounded-lg px-4 py-3 text-white min-h-[100px] resize-none"
+              className="w-full bg-white border border-slate-200 focus:border-red-500 focus:outline-none rounded-lg px-4 py-3 text-slate-900 min-h-[100px] resize-none shadow-sm"
               placeholder="Why is this transfer denied?"
             />
           </div>
@@ -491,7 +508,7 @@ export const AllocationPage: React.FC = () => {
             <textarea 
               value={returnNotes}
               onChange={(e) => setReturnNotes(e.target.value)}
-              className="w-full bg-[var(--bg-base)] border border-[var(--border)] focus:border-[var(--primary)] focus:outline-none rounded-lg px-4 py-3 text-white min-h-[100px] resize-none"
+              className="w-full bg-white border border-slate-200 focus:border-indigo-500 focus:outline-none rounded-lg px-4 py-3 text-slate-900 min-h-[100px] resize-none shadow-sm"
               placeholder="Record any damage, missing accessories, or general condition upon return..."
             />
           </div>
@@ -508,7 +525,7 @@ export const AllocationPage: React.FC = () => {
         </div>
       </Modal>
 
-    </div>
+    </motion.div>
   );
 };
 

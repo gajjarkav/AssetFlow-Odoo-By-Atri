@@ -90,8 +90,8 @@ const AuditPage: React.FC = () => {
     <div className="space-y-6 max-w-6xl mx-auto pb-10">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#F8FAFC]">Asset Audit</h1>
-          <p className="text-sm text-[#94A3B8]">Audit cycles and discrepancy reports</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Asset Audit</h1>
+          <p className="text-sm text-slate-500">Audit cycles and discrepancy reports</p>
         </div>
         {!activeAuditSummary && (
           <Button className="gap-2" onClick={() => setIsModalOpen(true)}>
@@ -141,7 +141,7 @@ const AuditPage: React.FC = () => {
                   {activeAuditDetail.items.map((item: any) => (
                     <TableRow key={item.id}>
                       <TableCell className="font-medium">
-                        <span className="font-mono text-xs text-[#94A3B8] block">{item.asset_tag}</span>
+                        <span className="font-mono text-xs font-medium text-slate-500 block">{item.asset_tag}</span>
                         {item.asset_name}
                       </TableCell>
                       <TableCell>{item.expected_location}</TableCell>

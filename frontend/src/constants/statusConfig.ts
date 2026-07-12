@@ -1,27 +1,27 @@
 export const statusConfig: Record<string, string> = {
   // Assets
-  available: "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30",
-  allocated: "bg-blue-500/20 text-blue-400 border border-blue-500/30",
-  reserved: "bg-violet-500/20 text-violet-400 border border-violet-500/30",
-  under_maintenance: "bg-amber-500/20 text-amber-400 border border-amber-500/30",
-  lost: "bg-red-500/20 text-red-400 border border-red-500/30",
-  retired: "bg-gray-500/20 text-gray-400 border border-gray-500/30",
-  disposed: "bg-zinc-500/20 text-zinc-400 border border-zinc-500/30",
+  available: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  allocated: "bg-blue-50 text-blue-700 border border-blue-200",
+  reserved: "bg-violet-50 text-violet-700 border border-violet-200",
+  under_maintenance: "bg-amber-50 text-amber-700 border border-amber-200",
+  lost: "bg-red-50 text-red-700 border border-red-200",
+  retired: "bg-slate-100 text-slate-700 border border-slate-200",
+  disposed: "bg-slate-100 text-slate-700 border border-slate-200",
   
   // Bookings
-  upcoming: "bg-blue-500/20 text-blue-400 border border-blue-500/30",
-  ongoing: "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30",
-  completed: "bg-gray-500/20 text-gray-400 border border-gray-500/30",
-  cancelled: "bg-red-500/20 text-red-400 border border-red-500/30",
+  upcoming: "bg-blue-50 text-blue-700 border border-blue-200",
+  ongoing: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  completed: "bg-slate-100 text-slate-700 border border-slate-200",
+  cancelled: "bg-red-50 text-red-700 border border-red-200",
 
   // Maintenance
-  pending: "bg-amber-500/20 text-amber-400 border border-amber-500/30",
-  approved: "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30",
-  rejected: "bg-red-500/20 text-red-400 border border-red-500/30",
-  technician_assigned: "bg-blue-500/20 text-blue-400 border border-blue-500/30",
-  in_progress: "bg-violet-500/20 text-violet-400 border border-violet-500/30",
-  resolved: "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30",
+  pending: "bg-amber-50 text-amber-700 border border-amber-200",
+  approved: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  rejected: "bg-red-50 text-red-700 border border-red-200",
+  technician_assigned: "bg-blue-50 text-blue-700 border border-blue-200",
+  in_progress: "bg-violet-50 text-violet-700 border border-violet-200",
+  resolved: "bg-emerald-50 text-emerald-700 border border-emerald-200",
 
   // Transfers
-  requested: "bg-amber-500/20 text-amber-400 border border-amber-500/30",
+  requested: "bg-amber-50 text-amber-700 border border-amber-200",
 };

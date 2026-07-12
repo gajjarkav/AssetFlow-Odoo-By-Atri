@@ -28,7 +28,7 @@ const LoginPage: React.FC = () => {
   const { register: registerPassword, handleSubmit: handlePasswordSubmit, formState: { errors: passwordErrors }, watch } = useForm();
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
     if (countdown > 0) {
       timer = setTimeout(() => setCountdown(c => c - 1), 1000);
     }
@@ -104,43 +104,43 @@ const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen flex w-full">
       {/* LEFT PANEL */}
-      <div className="hidden lg:flex w-1/2 bg-[#111118] flex-col justify-center px-16 relative border-r border-[#2A2A38]">
+      <div className="hidden lg:flex w-1/2 bg-slate-50 flex-col justify-center px-16 relative border-r border-slate-200">
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-full bg-[#22C55E] flex items-center justify-center text-white font-bold">
+            <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-500/20">
               AF
             </div>
-            <span className="font-bold text-2xl text-[#22C55E]">AssetFlow</span>
+            <span className="font-bold text-2xl text-indigo-600 tracking-tight">AssetFlow</span>
           </div>
-          <h2 className="text-3xl font-bold text-[#F8FAFC] mb-6">Enterprise Asset & Resource Management</h2>
+          <h2 className="text-3xl font-bold text-slate-900 mb-6 tracking-tight">Enterprise Asset & Resource Management</h2>
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="text-[#22C55E]" size={20} />
-              <span className="text-[#94A3B8]">Track and allocate company assets efficiently</span>
+              <CheckCircle2 className="text-indigo-600" size={20} />
+              <span className="text-slate-600 font-medium">Track and allocate company assets efficiently</span>
             </div>
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="text-[#22C55E]" size={20} />
-              <span className="text-[#94A3B8]">Manage bookings and maintenance seamlessly</span>
+              <CheckCircle2 className="text-indigo-600" size={20} />
+              <span className="text-slate-600 font-medium">Manage bookings and maintenance seamlessly</span>
             </div>
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="text-[#22C55E]" size={20} />
-              <span className="text-[#94A3B8]">Real-time analytics and detailed reporting</span>
+              <CheckCircle2 className="text-indigo-600" size={20} />
+              <span className="text-slate-600 font-medium">Real-time analytics and detailed reporting</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* RIGHT PANEL */}
-      <div className="w-full lg:w-1/2 bg-[#0B0B0F] flex items-center justify-center p-6 relative">
-        <div className="w-full max-w-md bg-[#1A1A22] border border-[#2A2A38] rounded-xl p-8 relative overflow-hidden transition-all duration-300">
+      <div className="w-full lg:w-1/2 bg-slate-100 flex items-center justify-center p-6 relative">
+        <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 relative overflow-hidden transition-all duration-300 shadow-xl">
           
           {errorMsg && (
-            <div className="mb-6 p-3 bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-lg text-[#EF4444] text-sm">
+            <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm font-medium">
               {errorMsg}
             </div>
           )}
           {successMsg && (
-            <div className="mb-6 p-3 bg-[#22C55E]/10 border border-[#22C55E]/30 rounded-lg text-[#22C55E] text-sm">
+            <div className="mb-6 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-600 text-sm font-medium">
               {successMsg}
             </div>
           )}
@@ -148,13 +148,13 @@ const LoginPage: React.FC = () => {
           {view === "login" && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="mb-8">
-                <h1 className="text-2xl font-bold text-[#F8FAFC]">Welcome back</h1>
-                <p className="text-[#94A3B8] mt-1">Please enter your details to sign in.</p>
+                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Welcome back</h1>
+                <p className="text-slate-500 mt-1 font-medium">Please enter your details to sign in.</p>
               </div>
 
               <form onSubmit={handleLoginSubmit(onLogin)} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-[#F8FAFC] mb-1.5">Email</label>
+                  <label className="block text-sm font-bold text-slate-900 mb-1.5">Email</label>
                   <input 
                     type="email"
                     {...registerLogin("email", { 
@@ -162,34 +162,34 @@ const LoginPage: React.FC = () => {
                       pattern: { value: /^\S+@\S+$/i, message: "Invalid email format" }
                     })}
                     disabled={loading}
-                    className="w-full bg-[#0B0B0F] border border-[#2A2A38] focus:border-[#22C55E] focus:outline-none rounded-lg px-4 py-2.5 text-white placeholder-[#64748B] transition-colors"
+                    className="w-full bg-white border border-slate-200 focus:border-indigo-500 focus:outline-none rounded-lg px-4 py-2.5 text-slate-900 placeholder-slate-400 transition-all shadow-sm"
                     placeholder="Enter your email"
                   />
-                  {loginErrors.email && <p className="mt-1 text-sm text-[#EF4444]">{String(loginErrors.email.message)}</p>}
+                  {loginErrors.email && <p className="mt-1 text-sm font-medium text-red-500">{String(loginErrors.email.message)}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#F8FAFC] mb-1.5">Password</label>
+                  <label className="block text-sm font-bold text-slate-900 mb-1.5">Password</label>
                   <div className="relative">
                     <input 
                       type={showPassword ? "text" : "password"}
                       {...registerLogin("password", { required: "Password is required", minLength: { value: 6, message: "Minimum 6 characters" } })}
                       disabled={loading}
-                      className="w-full bg-[#0B0B0F] border border-[#2A2A38] focus:border-[#22C55E] focus:outline-none rounded-lg pl-4 pr-10 py-2.5 text-white placeholder-[#64748B] transition-colors"
+                      className="w-full bg-white border border-slate-200 focus:border-indigo-500 focus:outline-none rounded-lg pl-4 pr-10 py-2.5 text-slate-900 placeholder-slate-400 transition-all shadow-sm"
                       placeholder="••••••••"
                     />
                     <button 
                       type="button" 
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#F8FAFC]"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  {loginErrors.password && <p className="mt-1 text-sm text-[#EF4444]">{String(loginErrors.password.message)}</p>}
+                  {loginErrors.password && <p className="mt-1 text-sm font-medium text-red-500">{String(loginErrors.password.message)}</p>}
                   
                   <div className="flex justify-end mt-2">
-                    <button type="button" onClick={() => { setView("forgot_email"); setErrorMsg(""); }} className="text-sm font-medium text-[#22C55E] hover:underline">
+                    <button type="button" onClick={() => { setView("forgot_email"); setErrorMsg(""); }} className="text-sm font-bold text-indigo-600 hover:underline">
                       Forgot password?
                     </button>
                   </div>
@@ -198,15 +198,15 @@ const LoginPage: React.FC = () => {
                 <button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full bg-[#22C55E] hover:bg-[#16a34a] text-black font-semibold rounded-lg py-2.5 px-5 flex items-center justify-center transition-colors disabled:opacity-70"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg py-2.5 px-5 flex items-center justify-center transition-colors disabled:opacity-70 shadow-md shadow-indigo-500/20"
                 >
                   {loading ? <Loader2 className="animate-spin" size={20} /> : "Sign in"}
                 </button>
               </form>
               
               <div className="mt-6 text-center">
-                <p className="text-sm text-[#94A3B8]">
-                  Don't have an account? <Link to="/signup" className="text-[#22C55E] hover:underline font-medium">Sign up</Link>
+                <p className="text-sm font-medium text-slate-500">
+                  Don't have an account? <Link to="/signup" className="text-indigo-600 hover:underline font-bold">Sign up</Link>
                 </p>
               </div>
             </div>
@@ -215,13 +215,13 @@ const LoginPage: React.FC = () => {
           {view === "forgot_email" && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="mb-6">
-                <h2 className="text-xl font-bold text-[#F8FAFC]">Reset Password</h2>
-                <p className="text-[#94A3B8] mt-1 text-sm">Enter your email and we'll send you an OTP.</p>
+                <h2 className="text-xl font-bold text-slate-900 tracking-tight">Reset Password</h2>
+                <p className="text-slate-500 font-medium mt-1 text-sm">Enter your email and we'll send you an OTP.</p>
               </div>
 
               <form onSubmit={handleEmailSubmit(onForgotEmail)} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-[#F8FAFC] mb-1.5">Email</label>
+                  <label className="block text-sm font-bold text-slate-900 mb-1.5">Email</label>
                   <input 
                     type="email"
                     {...registerEmail("email", { 
@@ -229,20 +229,20 @@ const LoginPage: React.FC = () => {
                       pattern: { value: /^\S+@\S+$/i, message: "Invalid email format" }
                     })}
                     disabled={loading}
-                    className="w-full bg-[#0B0B0F] border border-[#2A2A38] focus:border-[#22C55E] focus:outline-none rounded-lg px-4 py-2.5 text-white placeholder-[#64748B] transition-colors"
+                    className="w-full bg-white border border-slate-200 focus:border-indigo-500 focus:outline-none rounded-lg px-4 py-2.5 text-slate-900 placeholder-slate-400 transition-all shadow-sm"
                   />
-                  {emailErrors.email && <p className="mt-1 text-sm text-[#EF4444]">{String(emailErrors.email.message)}</p>}
+                  {emailErrors.email && <p className="mt-1 text-sm font-medium text-red-500">{String(emailErrors.email.message)}</p>}
                 </div>
                 <button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full bg-[#22C55E] hover:bg-[#16a34a] text-black font-semibold rounded-lg py-2.5 px-5 flex items-center justify-center transition-colors disabled:opacity-70"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg py-2.5 px-5 flex items-center justify-center transition-colors disabled:opacity-70 shadow-md shadow-indigo-500/20"
                 >
                   {loading ? <Loader2 className="animate-spin" size={20} /> : "Send OTP"}
                 </button>
               </form>
               
-              <button onClick={resetToLogin} className="mt-6 flex items-center justify-center gap-2 text-sm text-[#94A3B8] hover:text-[#F8FAFC] transition-colors w-full">
+              <button onClick={resetToLogin} className="mt-6 flex items-center justify-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors w-full">
                 <ArrowLeft size={16} /> Back to Login
               </button>
             </div>
@@ -251,8 +251,8 @@ const LoginPage: React.FC = () => {
           {view === "forgot_otp" && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="mb-6">
-                <h2 className="text-xl font-bold text-[#F8FAFC]">Enter OTP</h2>
-                <p className="text-[#94A3B8] mt-1 text-sm">We sent a code to <span className="text-[#F8FAFC]">{forgotEmail}</span></p>
+                <h2 className="text-xl font-bold text-slate-900 tracking-tight">Enter OTP</h2>
+                <p className="text-slate-500 font-medium mt-1 text-sm">We sent a code to <span className="font-bold text-slate-900">{forgotEmail}</span></p>
               </div>
 
               <form onSubmit={onVerifyOtp} className="space-y-5">
@@ -262,14 +262,14 @@ const LoginPage: React.FC = () => {
                     maxLength={6}
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                    className="w-full bg-[#0B0B0F] border border-[#2A2A38] focus:border-[#22C55E] focus:outline-none rounded-lg px-4 py-4 text-center text-2xl tracking-[0.5em] text-white font-mono transition-colors"
+                    className="w-full bg-white border border-slate-200 focus:border-indigo-500 focus:outline-none rounded-lg px-4 py-4 text-center text-2xl tracking-[0.5em] text-slate-900 font-mono transition-all shadow-sm"
                     placeholder="------"
                   />
                 </div>
                 <button 
                   type="submit" 
                   disabled={otp.length !== 6}
-                  className="w-full bg-[#22C55E] hover:bg-[#16a34a] text-black font-semibold rounded-lg py-2.5 px-5 flex items-center justify-center transition-colors disabled:opacity-70"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg py-2.5 px-5 flex items-center justify-center transition-colors disabled:opacity-70 shadow-md shadow-indigo-500/20"
                 >
                   Verify OTP
                 </button>
@@ -277,15 +277,15 @@ const LoginPage: React.FC = () => {
 
               <div className="mt-4 text-center">
                 {countdown > 0 ? (
-                  <p className="text-sm text-[#64748B]">Resend in 0:{countdown.toString().padStart(2, '0')}</p>
+                  <p className="text-sm font-bold text-slate-500">Resend in 0:{countdown.toString().padStart(2, '0')}</p>
                 ) : (
-                  <button onClick={() => onForgotEmail({email: forgotEmail})} className="text-sm text-[#22C55E] hover:underline font-medium">
+                  <button onClick={() => onForgotEmail({email: forgotEmail})} className="text-sm text-indigo-600 hover:underline font-bold">
                     Resend OTP
                   </button>
                 )}
               </div>
               
-              <button onClick={resetToLogin} className="mt-6 flex items-center justify-center gap-2 text-sm text-[#94A3B8] hover:text-[#F8FAFC] transition-colors w-full">
+              <button onClick={resetToLogin} className="mt-6 flex items-center justify-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors w-full">
                 <ArrowLeft size={16} /> Back to Login
               </button>
             </div>
@@ -294,33 +294,33 @@ const LoginPage: React.FC = () => {
           {view === "forgot_password" && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="mb-6">
-                <h2 className="text-xl font-bold text-[#F8FAFC]">Create new password</h2>
-                <p className="text-[#94A3B8] mt-1 text-sm">Your new password must be different from previous used passwords.</p>
+                <h2 className="text-xl font-bold text-slate-900 tracking-tight">Create new password</h2>
+                <p className="text-slate-500 font-medium mt-1 text-sm">Your new password must be different from previous used passwords.</p>
               </div>
 
               <form onSubmit={handlePasswordSubmit(onResetPassword)} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-[#F8FAFC] mb-1.5">New Password</label>
+                  <label className="block text-sm font-bold text-slate-900 mb-1.5">New Password</label>
                   <div className="relative">
                     <input 
                       type={showPassword ? "text" : "password"}
                       {...registerPassword("password", { required: "Password is required", minLength: { value: 6, message: "Minimum 6 characters" } })}
                       disabled={loading}
-                      className="w-full bg-[#0B0B0F] border border-[#2A2A38] focus:border-[#22C55E] focus:outline-none rounded-lg pl-4 pr-10 py-2.5 text-white placeholder-[#64748B] transition-colors"
+                      className="w-full bg-white border border-slate-200 focus:border-indigo-500 focus:outline-none rounded-lg pl-4 pr-10 py-2.5 text-slate-900 placeholder-slate-400 transition-all shadow-sm"
                     />
                     <button 
                       type="button" 
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#F8FAFC]"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  {passwordErrors.password && <p className="mt-1 text-sm text-[#EF4444]">{String(passwordErrors.password.message)}</p>}
+                  {passwordErrors.password && <p className="mt-1 text-sm font-medium text-red-500">{String(passwordErrors.password.message)}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#F8FAFC] mb-1.5">Confirm Password</label>
+                  <label className="block text-sm font-bold text-slate-900 mb-1.5">Confirm Password</label>
                   <div className="relative">
                     <input 
                       type={showConfirmPassword ? "text" : "password"}
@@ -329,29 +329,29 @@ const LoginPage: React.FC = () => {
                         validate: (val) => val === watch("password") || "Passwords do not match"
                       })}
                       disabled={loading}
-                      className="w-full bg-[#0B0B0F] border border-[#2A2A38] focus:border-[#22C55E] focus:outline-none rounded-lg pl-4 pr-10 py-2.5 text-white placeholder-[#64748B] transition-colors"
+                      className="w-full bg-white border border-slate-200 focus:border-indigo-500 focus:outline-none rounded-lg pl-4 pr-10 py-2.5 text-slate-900 placeholder-slate-400 transition-all shadow-sm"
                     />
                     <button 
                       type="button" 
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#F8FAFC]"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                     >
                       {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  {passwordErrors.confirm && <p className="mt-1 text-sm text-[#EF4444]">{String(passwordErrors.confirm.message)}</p>}
+                  {passwordErrors.confirm && <p className="mt-1 text-sm font-medium text-red-500">{String(passwordErrors.confirm.message)}</p>}
                 </div>
 
                 <button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full bg-[#22C55E] hover:bg-[#16a34a] text-black font-semibold rounded-lg py-2.5 px-5 flex items-center justify-center transition-colors disabled:opacity-70"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg py-2.5 px-5 flex items-center justify-center transition-colors disabled:opacity-70 shadow-md shadow-indigo-500/20"
                 >
                   {loading ? <Loader2 className="animate-spin" size={20} /> : "Reset Password"}
                 </button>
               </form>
               
-              <button onClick={resetToLogin} className="mt-6 flex items-center justify-center gap-2 text-sm text-[#94A3B8] hover:text-[#F8FAFC] transition-colors w-full">
+              <button onClick={resetToLogin} className="mt-6 flex items-center justify-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors w-full">
                 <ArrowLeft size={16} /> Back to Login
               </button>
             </div>
