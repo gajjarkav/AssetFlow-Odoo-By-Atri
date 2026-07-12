@@ -1,30 +1,17 @@
-import React from 'react';
-import { assetStatusConfig, bookingStatusConfig, maintenanceStatusConfig, transferStatusConfig } from '../../constants/statusConfig';
+import React from "react";
+import { statusConfig } from "../../constants/statusConfig";
 
 interface StatusBadgeProps {
   status: string;
-  type: 'asset' | 'booking' | 'maintenance' | 'transfer';
 }
 
-const configMap = {
-  asset: assetStatusConfig,
-  booking: bookingStatusConfig,
-  maintenance: maintenanceStatusConfig,
-  transfer: transferStatusConfig,
-};
-
-export default function StatusBadge({ status, type }: StatusBadgeProps) {
-  const config = configMap[type][status];
-  if (!config) {
-    return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-500/20 text-gray-400 border border-gray-500/30">
-        {status}
-      </span>
-    );
-  }
+export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
+  const config = statusConfig[status.toLowerCase()] || "bg-gray-500/20 text-gray-400 border border-gray-500/30";
+  const label = status.replace(/_/g, " ").toUpperCase();
+  
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.className}`}>
-      {config.label}
+    <span className={`px-2 py-1 rounded text-xs font-medium uppercase tracking-wider ${config}`}>
+      {label}
     </span>
   );
-}
+};

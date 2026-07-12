@@ -1,40 +1,29 @@
-import React from 'react';
-import type { LucideIcon } from 'lucide-react';
+import React from "react";
+import { LucideIcon } from "lucide-react";
 
 interface KPICardProps {
   title: string;
-  value: number | string;
+  value: string | number;
   icon: LucideIcon;
-  colorKey: 'green' | 'blue' | 'amber' | 'red' | 'violet' | 'indigo';
+  colorKey?: string;
   subtitle?: string;
   onClick?: () => void;
 }
 
-const colorMap = {
-  green: { bg: 'rgba(34,197,94,0.15)', color: '#22C55E' },
-  blue: { bg: 'rgba(59,130,246,0.15)', color: '#60A5FA' },
-  amber: { bg: 'rgba(245,158,11,0.15)', color: '#FBBF24' },
-  red: { bg: 'rgba(239,68,68,0.15)', color: '#F87171' },
-  violet: { bg: 'rgba(139,92,246,0.15)', color: '#A78BFA' },
-  indigo: { bg: 'rgba(99,102,241,0.15)', color: '#818CF8' },
-};
-
-export default function KPICard({ title, value, icon: Icon, colorKey, subtitle, onClick }: KPICardProps) {
+export const KPICard: React.FC<KPICardProps> = ({ title, value, icon: Icon, colorKey = "text-primary", subtitle, onClick }) => {
   return (
     <div 
+      className={`bg-[var(--bg-card)] border border-[var(--border)] p-5 rounded-lg flex items-center justify-between ${onClick ? "cursor-pointer hover:border-[var(--primary)] transition-colors" : ""}`}
       onClick={onClick}
-      className={`bg-[#1A1A22] border border-[#2A2A38] rounded-xl p-5 transition-colors ${onClick ? 'cursor-pointer hover:border-[#3A3A48]' : ''}`}
     >
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm text-slate-400 font-medium">{title}</p>
-          <p className="text-3xl font-bold text-white mt-1">{value}</p>
-          {subtitle && <p className="text-xs text-slate-500 mt-1">{subtitle}</p>}
-        </div>
-        <div className="p-2.5 rounded-lg" style={{ background: colorMap[colorKey].bg }}>
-          <Icon size={20} style={{ color: colorMap[colorKey].color }} />
-        </div>
+      <div>
+        <p className="text-[var(--text-secondary)] text-sm mb-1">{title}</p>
+        <h3 className="text-2xl font-bold text-[var(--text-primary)]">{value}</h3>
+        {subtitle && <p className="text-xs text-[var(--text-secondary)] mt-1">{subtitle}</p>}
+      </div>
+      <div className={`p-3 rounded-full bg-[var(--bg-base)] ${colorKey}`}>
+        <Icon size={24} />
       </div>
     </div>
   );
-}
+};

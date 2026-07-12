@@ -1,15 +1,8 @@
-import React from 'react';
-
-export default function AssetDetailPage() {
-  return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Asset Details</h1>
-        <p className="text-slate-400 mt-1">Loading content...</p>
-      </div>
-      <div className="bg-[#1A1A22] border border-[#2A2A38] rounded-xl p-8 text-center">
-        <p className="text-slate-400">This section is being built.</p>
-      </div>
-    </div>
-  );
-}
+import React from "react";
+const AssetDetailPage: React.FC = () => (
+  <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6">
+    <h2 className="text-xl font-bold mb-4">Asset Details</h2>
+    <p className="text-[var(--text-secondary)]">Coming soon.</p>
+  </div>
+);
+export default AssetDetailPage;

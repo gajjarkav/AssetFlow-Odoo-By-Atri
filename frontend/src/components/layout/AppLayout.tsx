@@ -1,13 +1,13 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
-import Sidebar from './Sidebar';
-import Topbar from './Topbar';
+import React from "react";
+import { Outlet } from "react-router-dom";
+import { Sidebar } from "./Sidebar";
+import { Topbar } from "./Topbar";
 
-export default function AppLayout() {
+export const AppLayout: React.FC = () => {
   return (
-    <div className="flex h-screen overflow-hidden" style={{background: '#0B0B0F'}}>
+    <div className="flex h-screen bg-[var(--bg-base)] overflow-hidden">
       <Sidebar />
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0">
         <Topbar />
         <main className="flex-1 overflow-y-auto p-6">
           <Outlet />
@@ -15,4 +15,4 @@ export default function AppLayout() {
       </div>
     </div>
   );
-}
+};

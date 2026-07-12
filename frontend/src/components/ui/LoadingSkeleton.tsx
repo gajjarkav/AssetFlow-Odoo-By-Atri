@@ -1,15 +1,12 @@
-import React from 'react';
+import React from "react";
 
-interface LoadingSkeletonProps {
-  rows?: number;
-}
-
-export default function LoadingSkeleton({ rows = 5 }: LoadingSkeletonProps) {
+export const LoadingSkeleton: React.FC = () => {
   return (
-    <div className="w-full">
-      {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="h-12 bg-[#2A2A38] rounded-lg mb-3 animate-pulse" />
-      ))}
+    <div className="animate-pulse space-y-4 w-full">
+      <div className="h-10 bg-[var(--border)] rounded w-full"></div>
+      <div className="h-10 bg-[var(--border)] rounded w-full"></div>
+      <div className="h-10 bg-[var(--border)] rounded w-full"></div>
+      <div className="h-10 bg-[var(--border)] rounded w-3/4"></div>
     </div>
   );
-}
+};
