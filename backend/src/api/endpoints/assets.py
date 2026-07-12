@@ -12,6 +12,9 @@ from src.models.user import User
 from src.models.asset import Asset
 from src.models.category import Category
 from src.models.department import Department
+from src.models.allocation import Allocation
+from src.models.transfer import TransferRequest
+from src.models.maintenance import MaintenanceRequest
 from src.core.enums import UserRole, AssetStatus
 from src.schemas.asset import (
     AssetCreate,
@@ -49,6 +52,16 @@ def map_asset_to_response(asset: Asset) -> AssetResponse:
     Safely maps the SQLAlchemy Asset model to the AssetResponse Pydantic schema
     avoiding async lazy loading issues by using populated relationships.
     """
+    holder_id = None
+    holder_name = None
+    if asset.active_allocation:
+        if asset.active_allocation.employee:
+            holder_id = asset.active_allocation.employee_id
+            holder_name = asset.active_allocation.employee.name
+        elif asset.active_allocation.department:
+            holder_id = asset.active_allocation.department_id
+            holder_name = asset.active_allocation.department.name
+
     return AssetResponse(
         id=asset.id,
         name=asset.name,
@@ -68,8 +81,8 @@ def map_asset_to_response(asset: Asset) -> AssetResponse:
         created_by=asset.created_by,
         created_at=asset.created_at,
         updated_at=asset.updated_at,
-        current_holder_id=None,
-        current_holder_name=None
+        current_holder_id=holder_id,
+        current_holder_name=holder_name
     )
 
 @router.post("/", response_model=AssetResponse, status_code=status.HTTP_201_CREATED)
@@ -138,7 +151,12 @@ async def register_asset(
     # Eagerly load relations for response mapping
     stmt = (
         select(Asset)
-        .options(joinedload(Asset.category), joinedload(Asset.department))
+        .options(
+            joinedload(Asset.category), 
+            joinedload(Asset.department),
+            joinedload(Asset.active_allocation).joinedload(Allocation.employee),
+            joinedload(Asset.active_allocation).joinedload(Allocation.department)
+        )
         .where(Asset.id == new_asset.id)
     )
     res = await db.execute(stmt)
@@ -162,7 +180,15 @@ async def list_assets(
     """
     List all assets with filtering and pagination. Open to all authenticated active users.
     """
-    query = select(Asset).options(joinedload(Asset.category), joinedload(Asset.department))
+    query = (
+        select(Asset)
+        .options(
+            joinedload(Asset.category), 
+            joinedload(Asset.department),
+            joinedload(Asset.active_allocation).joinedload(Allocation.employee),
+            joinedload(Asset.active_allocation).joinedload(Allocation.department)
+        )
+    )
     
     if search:
         search_term = f"%{search}%"
@@ -208,7 +234,12 @@ async def get_asset(
     """
     stmt = (
         select(Asset)
-        .options(joinedload(Asset.category), joinedload(Asset.department))
+        .options(
+            joinedload(Asset.category), 
+            joinedload(Asset.department),
+            joinedload(Asset.active_allocation).joinedload(Allocation.employee),
+            joinedload(Asset.active_allocation).joinedload(Allocation.department)
+        )
         .where(Asset.id == id)
     )
     result = await db.execute(stmt)
@@ -234,7 +265,12 @@ async def update_asset(
     """
     stmt = (
         select(Asset)
-        .options(joinedload(Asset.category), joinedload(Asset.department))
+        .options(
+            joinedload(Asset.category), 
+            joinedload(Asset.department),
+            joinedload(Asset.active_allocation).joinedload(Allocation.employee),
+            joinedload(Asset.active_allocation).joinedload(Allocation.department)
+        )
         .where(Asset.id == id)
     )
     result = await db.execute(stmt)
@@ -299,8 +335,7 @@ async def get_asset_history(
     current_user: User = Depends(get_current_user)
 ):
     """
-    Get the history timeline of an asset. Currently returns empty stubs,
-    to be populated as future modules (Allocations, Maintenance, Transfers) are built.
+    Get the history timeline of an asset, including allocations, transfers, and maintenance logs.
     """
     asset = await db.get(Asset, id)
     if not asset:
@@ -309,10 +344,77 @@ async def get_asset_history(
             detail="Asset not found"
         )
         
+    # Query allocations
+    allocs_stmt = (
+        select(Allocation)
+        .options(joinedload(Allocation.employee))
+        .where(Allocation.asset_id == id)
+        .order_by(Allocation.allocated_at.desc())
+    )
+    allocs_res = await db.execute(allocs_stmt)
+    allocs = allocs_res.scalars().all()
+    
+    # Query transfers
+    trans_stmt = (
+        select(TransferRequest)
+        .where(TransferRequest.asset_id == id)
+        .order_by(TransferRequest.requested_at.desc())
+    )
+    trans_res = await db.execute(trans_stmt)
+    trans = trans_res.scalars().all()
+    
+    # Query maintenance requests
+    maint_stmt = (
+        select(MaintenanceRequest)
+        .where(MaintenanceRequest.asset_id == id)
+        .order_by(MaintenanceRequest.requested_at.desc())
+    )
+    maint_res = await db.execute(maint_stmt)
+    maints = maint_res.scalars().all()
+    
+    # Map to schema stubs
+    alloc_stubs = [
+        {
+            "id": a.id,
+            "employee_id": a.employee_id,
+            "employee_name": a.employee.name if a.employee else None,
+            "department_id": a.department_id,
+            "allocated_at": a.allocated_at,
+            "expected_return": a.expected_return,
+            "returned_at": a.returned_at,
+            "status": a.status.value
+        }
+        for a in allocs
+    ]
+    
+    trans_stubs = [
+        {
+            "id": t.id,
+            "from_user_id": t.from_user_id,
+            "to_user_id": t.to_user_id,
+            "status": t.status.value,
+            "requested_at": t.requested_at,
+            "resolved_at": t.decided_at
+        }
+        for t in trans
+    ]
+    
+    maint_stubs = [
+        {
+            "id": m.id,
+            "issue_description": m.issue_description,
+            "priority": m.priority,
+            "status": m.status.value,
+            "requested_at": m.requested_at,
+            "resolved_at": m.resolved_at
+        }
+        for m in maints
+    ]
+    
     return AssetHistoryResponse(
         asset_id=asset.id,
         tag=asset.tag,
-        allocations=[],
-        maintenance=[],
-        transfers=[]
+        allocations=alloc_stubs,
+        maintenance=maint_stubs,
+        transfers=trans_stubs
     )

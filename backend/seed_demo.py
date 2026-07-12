@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime, timezone
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.session import AsyncSessionLocal
@@ -6,8 +7,10 @@ from src.models.department import Department
 from src.models.category import Category
 from src.models.user import User
 from src.models.asset import Asset
+from src.models.allocation import Allocation
+from src.models.booking import Booking
 from src.core.security import get_password_hash
-from src.core.enums import UserRole, AssetStatus
+from src.core.enums import UserRole, AssetStatus, AllocationStatus, BookingStatus
 
 async def seed_demo_data():
     async with AsyncSessionLocal() as db:
@@ -71,6 +74,7 @@ async def seed_demo_data():
         db.add_all([am, dh, emp])
         await db.commit()
         await db.refresh(am)
+        await db.refresh(emp)
         
         # Set Dept Heads
         eng.head_id = dh.id
@@ -88,7 +92,7 @@ async def seed_demo_data():
             condition="GOOD",
             location="Longhorn",
             is_shared=False,
-            status=AssetStatus.AVAILABLE,
+            status=AssetStatus.ALLOCATED,  # Allocated to Arjun
             department_id=eng.id,
             created_by=am.id
         )
@@ -137,13 +141,41 @@ async def seed_demo_data():
         
         db.add_all([laptop, projector, room, chair])
         await db.commit()
+        await db.refresh(laptop)
+        
+        # 5. Create Demo Allocation (Laptop to Arjun)
+        print("Creating Demo Allocation...")
+        alloc = Allocation(
+            asset_id=laptop.id,
+            employee_id=emp.id,
+            allocated_by=am.id,
+            status=AllocationStatus.ACTIVE,
+            notes="Onboarding kit"
+        )
+        db.add(alloc)
+        await db.commit()
+        
+        # 6. Create Demo Booking — Room B2 booked by Arjun (09:00–10:00 today)
+        print("Creating Demo Booking...")
+        today = datetime.now(timezone.utc).replace(hour=3, minute=30, second=0, microsecond=0)  # 09:00 IST = 03:30 UTC
+        booking = Booking(
+            asset_id=room.id,
+            user_id=emp.id,
+            start_at=today,
+            end_at=today.replace(hour=4, minute=30),   # 10:00 IST = 04:30 UTC
+            purpose="Procurement standup",
+            status=BookingStatus.UPCOMING,
+        )
+        db.add(booking)
+        await db.commit()
         
         print("Demo data seeded successfully!")
         print("Users created (password for all is 'password123'):")
         print("- raj@assetflow.com (ASSET_MANAGER)")
         print("- priya@assetflow.com (DEPARTMENT_HEAD)")
         print("- arjun@assetflow.com (EMPLOYEE)")
-        print("Assets seeded: AF-000114, AF-000062, AF-000003, AF-000201")
+        print("Assets seeded: AF-000114 (Allocated to Arjun), AF-000062, AF-000003, AF-000201")
+        print("Booking seeded: Room B2 booked by Arjun 09:00–10:00 IST")
 
 if __name__ == "__main__":
     asyncio.run(seed_demo_data())

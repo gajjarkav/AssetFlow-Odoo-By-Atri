@@ -36,3 +36,7 @@ class TransferStatus(enum.Enum):
     REQUESTED = "REQUESTED"
     APPROVED = "APPROVED"
     REJECTED = "REJECTED"
+
+class AllocationStatus(enum.Enum):
+    ACTIVE = "ACTIVE"
+    RETURNED = "RETURNED"

@@ -35,3 +35,11 @@ class Asset(Base):
     category = relationship("Category", back_populates="assets")
     department = relationship("Department", foreign_keys=[department_id])
     creator = relationship("User", foreign_keys=[created_by])
+    
+    # Eager active allocation helper
+    active_allocation = relationship(
+        "Allocation",
+        primaryjoin="and_(Asset.id==Allocation.asset_id, Allocation.status=='ACTIVE')",
+        uselist=False,
+        viewonly=True
+    )
