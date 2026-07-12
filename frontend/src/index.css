@@ -26,13 +26,21 @@
   --text-secondary: #64748B;
 }
 
+@keyframes meshGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 body {
   background-color: #F8FAFC;
   background-image: 
-    radial-gradient(at 40% 20%, hsla(250,100%,74%,0.08) 0px, transparent 50%),
-    radial-gradient(at 80% 0%, hsla(189,100%,56%,0.08) 0px, transparent 50%),
-    radial-gradient(at 0% 50%, hsla(355,100%,93%,0.08) 0px, transparent 50%);
+    radial-gradient(at 40% 20%, hsla(250,100%,74%,0.12) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, hsla(189,100%,56%,0.12) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, hsla(355,100%,93%,0.12) 0px, transparent 50%);
   background-attachment: fixed;
+  background-size: 200% 200%;
+  animation: meshGradient 15s ease infinite;
   color: var(--text-primary);
   margin: 0;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

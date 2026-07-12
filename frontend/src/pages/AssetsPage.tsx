@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search, Plus, Filter } from "lucide-react";
+import { motion } from "framer-motion";
 import { assets as assetsApi } from "../api/endpoints";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { Button } from "../components/ui/button";
@@ -24,8 +25,22 @@ const AssetsPage: React.FC = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const container: any = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+  };
+  const item: any = {
+    hidden: { opacity: 0, x: -10 },
+    show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.4 }} 
+      className="space-y-6 max-w-7xl mx-auto"
+    >
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Asset Directory</h1>
         <Button className="gap-2 shadow-md shadow-indigo-500/20"><Plus size={16} /> Register Asset</Button>
@@ -69,7 +84,7 @@ const AssetsPage: React.FC = () => {
             </TableHeader>
             <TableBody>
               {filteredAssets?.map((asset: any) => (
-                <TableRow key={asset.id}>
+                <motion.tr variants={item} initial="hidden" animate="show" key={asset.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                   <TableCell className="font-mono text-sm">{asset.tag}</TableCell>
                   <TableCell className="font-bold text-slate-800">
                     {asset.name}
@@ -81,7 +96,7 @@ const AssetsPage: React.FC = () => {
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm">View</Button>
                   </TableCell>
-                </TableRow>
+                </motion.tr>
               ))}
               {filteredAssets?.length === 0 && (
                 <TableRow>
@@ -92,7 +107,7 @@ const AssetsPage: React.FC = () => {
           </Table>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

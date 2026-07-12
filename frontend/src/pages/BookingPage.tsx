@@ -2,6 +2,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { Calendar as CalendarIcon, AlertCircle } from "lucide-react";
+import { motion } from "framer-motion";
 import { resources } from "../api/endpoints";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
 import { LoadingSkeleton } from "../components/ui/LoadingSkeleton";
@@ -14,8 +15,22 @@ const BookingPage: React.FC = () => {
     queryFn: async () => (await resources.getBookings()).data
   });
 
+  const container: any = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+  };
+  const item: any = {
+    hidden: { opacity: 0, x: -20 },
+    show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.4 }} 
+      className="space-y-6 max-w-5xl mx-auto"
+    >
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Resource Booking</h1>
@@ -44,7 +59,7 @@ const BookingPage: React.FC = () => {
               {/* Timeline background */}
               <div className="absolute left-16 top-0 bottom-0 w-px bg-slate-200"></div>
               
-              <div className="space-y-6">
+              <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
                 {[9, 10, 11, 12, 13, 14, 15, 16, 17].map(hour => {
                   const hourStr = `${hour}:00`;
                   const is12 = hour === 12;
@@ -53,7 +68,7 @@ const BookingPage: React.FC = () => {
                   const bookingForHour = bookings?.find((b: any) => dayjs(b.start_time).hour() === hour);
                   
                   return (
-                    <div key={hour} className="relative flex items-start gap-8">
+                    <motion.div variants={item} key={hour} className="relative flex items-start gap-8">
                       <div className="w-12 text-right text-sm text-slate-500 font-medium pt-2 shrink-0">{hourStr}</div>
                       <div className="relative w-full min-h-[60px] border-t border-slate-200/50 pt-2">
                         {bookingForHour && (
@@ -76,15 +91,15 @@ const BookingPage: React.FC = () => {
                           </div>
                         )}
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
-              </div>
+              </motion.div>
             </div>
           )}
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 };
 

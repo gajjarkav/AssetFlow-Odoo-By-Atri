@@ -6,6 +6,7 @@ import {
   CheckCircle, Package, Calendar, ArrowRightLeft, 
   Clock, AlertTriangle, Plus, Wrench, RefreshCw 
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { KPICard } from "../components/ui/KPICard";
 import { LoadingSkeleton } from "../components/ui/LoadingSkeleton";
@@ -59,8 +60,22 @@ const DashboardPage: React.FC = () => {
   const stats = data?.stats;
   const recentActivity = data?.recent_activity?.slice(0, 10) || [];
 
+  const container: any = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+  };
+  const item: any = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.4 }} 
+      className="space-y-8 max-w-7xl mx-auto"
+    >
       {stats && stats.overdue_returns > 0 && (
         <div className="bg-red-50 border border-red-200 border-l-4 border-l-red-500 rounded-lg p-4 flex items-center gap-3 shadow-md">
           <AlertTriangle className="text-red-600 shrink-0" size={24} />
@@ -71,20 +86,20 @@ const DashboardPage: React.FC = () => {
       )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading ? (
           Array(6).fill(0).map((_, i) => <LoadingSkeleton key={i} />)
         ) : stats ? (
           <>
-            <KPICard title="Available Assets" value={stats.available_assets} icon={CheckCircle} colorKey="text-emerald-500" />
-            <KPICard title="Allocated Assets" value={stats.allocated_assets} icon={Package} colorKey="text-blue-500" />
-            <KPICard title="Active Bookings" value={stats.active_bookings} icon={Calendar} colorKey="text-indigo-500" />
-            <KPICard title="Pending Transfers" value={stats.pending_transfers} icon={ArrowRightLeft} colorKey="text-amber-500" />
-            <KPICard title="Upcoming Returns" value={stats.upcoming_returns} icon={Clock} colorKey="text-violet-500" />
-            <KPICard title="Overdue Returns" value={stats.overdue_returns} icon={AlertTriangle} colorKey="text-red-500" />
+            <motion.div variants={item}><KPICard title="Available Assets" value={stats.available_assets} icon={CheckCircle} colorKey="text-emerald-500" /></motion.div>
+            <motion.div variants={item}><KPICard title="Allocated Assets" value={stats.allocated_assets} icon={Package} colorKey="text-blue-500" /></motion.div>
+            <motion.div variants={item}><KPICard title="Active Bookings" value={stats.active_bookings} icon={Calendar} colorKey="text-indigo-500" /></motion.div>
+            <motion.div variants={item}><KPICard title="Pending Transfers" value={stats.pending_transfers} icon={ArrowRightLeft} colorKey="text-amber-500" /></motion.div>
+            <motion.div variants={item}><KPICard title="Upcoming Returns" value={stats.upcoming_returns} icon={Clock} colorKey="text-violet-500" /></motion.div>
+            <motion.div variants={item}><KPICard title="Overdue Returns" value={stats.overdue_returns} icon={AlertTriangle} colorKey="text-red-500" /></motion.div>
           </>
         ) : null}
-      </div>
+      </motion.div>
 
       {/* Quick Actions */}
       <div className="flex flex-col sm:flex-row gap-4">
@@ -124,7 +139,7 @@ const DashboardPage: React.FC = () => {
           ) : recentActivity.length === 0 ? (
             <EmptyState icon={Clock} message="No recent activity" description="Activity will appear here once users interact with assets." />
           ) : (
-            <div className="space-y-4">
+            <motion.div variants={container} initial="hidden" animate="show" className="space-y-4">
               {recentActivity.map((activity) => {
                 let dotColor = "bg-gray-500";
                 if (activity.type.includes("allocation")) dotColor = "bg-blue-500";
@@ -133,20 +148,20 @@ const DashboardPage: React.FC = () => {
                 if (activity.type.includes("return")) dotColor = "bg-emerald-500";
 
                 return (
-                  <div key={activity.id} className="flex items-center gap-4 p-3 hover:bg-slate-50 rounded-lg transition-colors border border-transparent hover:border-slate-200">
+                  <motion.div variants={item} key={activity.id} className="flex items-center gap-4 p-3 hover:bg-slate-50 rounded-lg transition-colors border border-transparent hover:border-slate-200">
                     <div className={`w-2.5 h-2.5 rounded-full ${dotColor} shrink-0 shadow-sm`} />
                     <p className="flex-1 text-sm text-slate-700 font-medium">{activity.description}</p>
                     <span className="text-xs text-slate-400 shrink-0 font-medium">
                       {dayjs(activity.created_at).format("MMM D, h:mm A")}
                     </span>
-                  </div>
+                  </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
           )}
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 };
 

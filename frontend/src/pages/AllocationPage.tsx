@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import { AlertTriangle, Search, Check, X, ArrowRight, CornerDownRight, Loader2, ArrowRightLeft } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 import { assets as assetsApi, employees as empApi, transfers as transApi, allocations as allocApi } from "../api/endpoints";
 import { useAuth } from "../context/AuthContext";
 import { StatusBadge } from "../components/ui/StatusBadge";
@@ -176,8 +177,22 @@ export const AllocationPage: React.FC = () => {
   const isConflict = selectedAsset && (selectedAsset.status === "allocated" || conflictHolder);
   const actualHolderName = conflictHolder || selectedAsset?.current_holder_name || "Unknown User";
 
+  const container: any = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+  const item: any = {
+    hidden: { opacity: 0, x: 20 },
+    show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="space-y-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.4 }} 
+      className="space-y-6"
+    >
       
       {/* Top 2 columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
@@ -362,8 +377,9 @@ export const AllocationPage: React.FC = () => {
             ) : transfers.length === 0 ? (
               <div className="py-8"><EmptyState icon={ArrowRightLeft} message="No pending transfers" /></div>
             ) : (
-              transfers.map((t: any) => (
-                <div key={t.id} className="bg-[var(--bg-base)] border border-[var(--border)] rounded-lg p-4 transition-all hover:border-[var(--primary)]/30">
+              <motion.div variants={container} initial="hidden" animate="show" className="space-y-3">
+                {transfers.map((t: any) => (
+                  <motion.div variants={item} key={t.id} className="bg-[var(--bg-base)] border border-[var(--border)] rounded-lg p-4 transition-all hover:border-[var(--primary)]/30">
                   <div className="flex justify-between items-start mb-2">
                     <p className="font-bold text-slate-800">[{t.asset_tag || "ASSET"}] {t.asset_name}</p>
                     <span className="text-xs text-[var(--text-muted)] font-medium">{dayjs(t.created_at).format("MMM D")}</span>
@@ -395,8 +411,9 @@ export const AllocationPage: React.FC = () => {
                       </button>
                     </div>
                   )}
-                </div>
-              ))
+                  </motion.div>
+                ))}
+              </motion.div>
             )}
           </div>
         </div>
@@ -508,7 +525,7 @@ export const AllocationPage: React.FC = () => {
         </div>
       </Modal>
 
-    </div>
+    </motion.div>
   );
 };
 
