@@ -28,3 +28,17 @@ class UserUpdateRole(BaseModel):
 
 class UserUpdateStatus(BaseModel):
     status: UserStatus
+
+class EmployeeUpdate(BaseModel):
+    name: str | None = Field(default=None, max_length=255)
+    phone: str | None = Field(default=None, max_length=50)
+    department_id: uuid.UUID | None = None
+
+class EmployeeOptionsResponse(BaseModel):
+    id: uuid.UUID
+    name: str
+    email: EmailStr
+    department_id: uuid.UUID | None = None
+    role: UserRole
+    
+    model_config = ConfigDict(from_attributes=True)
